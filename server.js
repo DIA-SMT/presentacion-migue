@@ -20,10 +20,13 @@ const TIPOS = {
 
 const oyentes = new Set();   // pantallas de presentación conectadas
 let ultimoEstado = null;     // lo que la presentación reporta (placa actual, Migue sonando o no)
+let ultimoControl = 0;       // última vez que el celular preguntó el estado
 
 function servirArchivo(req, res) {
     let rel = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     if (rel === '/') rel = '/index.html';
+    // Direcciones sin ".html", como en Vercel: /control → control.html
+    if (!path.extname(rel) && fs.existsSync(path.join(ROOT, rel + '.html'))) rel += '.html';
     const archivo = path.normalize(path.join(ROOT, rel));
     if (!archivo.startsWith(ROOT)) { res.writeHead(403); return res.end(); }
     fs.stat(archivo, (err, st) => {
@@ -82,8 +85,15 @@ http.createServer(async (req, res) => {
             res.writeHead(502); return res.end(JSON.stringify({ error: 'Migue no respondió a tiempo' }));
         }
     }
+    // La pantalla pregunta su IP en la red (para el QR del celular) y si hay un celular conectado.
+    if (url.pathname === '/red') {
+        const ips = Object.values(os.networkInterfaces()).flat().filter(i => i && i.family === 'IPv4' && !i.internal).map(i => i.address);
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
+        return res.end(JSON.stringify({ ips, controlHace: ultimoControl ? Date.now() - ultimoControl : 1e9 }));
+    }
     if (url.pathname === '/estado') {
         if (req.method === 'POST') { try { ultimoEstado = JSON.parse(await leerCuerpo(req)); } catch { } res.writeHead(204); return res.end(); }
+        ultimoControl = Date.now();
         res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
         return res.end(JSON.stringify({ ...(ultimoEstado || {}), pantallas: oyentes.size }));
     }

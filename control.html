@@ -14,15 +14,25 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: #0f1623; color: #fff; font-family: 'Poppins', system-ui, sans-serif; user-select: none; overflow: hidden; touch-action: manipulation; }
 body { display: grid; grid-template-rows: auto 1.25fr 1.6fr .75fr .6fr; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); height: 100dvh; }
-button { font-family: inherit; border: 0; color: inherit; border-radius: 24px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .08s ease, filter .15s ease; }
+button { font-family: inherit; border: 0; color: inherit; border-radius: 24px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .08s ease, filter .15s ease, box-shadow .2s ease; position: relative; }
 button:active { transform: scale(.97); filter: brightness(1.25); }
 button small { font-size: 15px; font-weight: 600; opacity: .8; max-width: 92%; line-height: 1.25; text-align: center; }
+/* Confirmación de cada toque: borde verde si la pantalla lo recibió, rojo si no. */
+button.enviando { box-shadow: inset 0 0 0 4px rgba(255,255,255,.55); }
+button.llego { box-shadow: inset 0 0 0 5px #3ecf8e; }
+button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease; }
+@keyframes temblar { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 
-.estado { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #9aa6b8; }
+.estado { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #9aa6b8; min-height: 34px; border-radius: 14px; padding: 0 4px; transition: background .2s ease; }
 .estado b { color: #fff; font-size: 16px; }
 .estado .titulo { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #d3dae6; }
 .punto { width: 12px; height: 12px; border-radius: 50%; background: #e5484d; flex: none; }
 .punto.ok { background: #3ecf8e; }
+/* Sin pantalla: la barra de arriba se pone roja y grande, imposible no verla. */
+.estado.alerta { background: #e5484d; color: #fff; padding: 10px 14px; min-height: 56px; }
+.estado.alerta .titulo { color: #fff; white-space: normal; font-size: 16px; font-weight: 800; }
+.estado.alerta .punto { background: #fff; animation: titilar 1s infinite; }
+@keyframes titilar { 50% { opacity: .3; } }
 
 #migue { background: #f4dc00; color: #222; font-size: 30px; }
 #migue.suena { background: #3ecf8e; }
@@ -32,11 +42,19 @@ button small { font-size: 15px; font-weight: 600; opacity: .8; max-width: 92%; l
 .gris { background: #242f42; font-size: 22px; }
 .ef { background: #1a2332; border: 2px solid #2b3850; font-size: 17px; border-radius: 20px; }
 .ef.on { background: #3ecf8e; border-color: #3ecf8e; color: #0d2419; }
+
+/* Pedir el código de sala cuando falta. */
+#sala { position: fixed; inset: 0; z-index: 9; background: #0f1623; display: none; flex-direction: column; justify-content: center; gap: 16px; padding: 28px; }
+#sala.ver { display: flex; }
+#sala h1 { font-size: 26px; font-weight: 800; }
+#sala p { font-size: 16px; color: #9aa6b8; line-height: 1.45; }
+#sala input { font: 600 24px 'Poppins', sans-serif; padding: 16px 18px; border-radius: 16px; border: 2px solid #2b3850; background: #0c121c; color: #fff; user-select: text; }
+#sala button { background: #0066ff; font-size: 22px; padding: 18px; }
 </style>
 </head>
 <body>
 
-<div class="estado"><span class="punto" id="punto"></span><span class="titulo" id="titulo">Conectando…</span><b id="num">–</b></div>
+<div class="estado" id="estado"><span class="punto" id="punto"></span><span class="titulo" id="titulo">Conectando…</span><b id="num">–</b></div>
 
 <button id="migue">MIGUE HABLA<small id="migueSub">Próximo video</small></button>
 
@@ -53,38 +71,61 @@ button small { font-size: 15px; font-weight: 600; opacity: .8; max-width: 92%; l
   <button class="ef" id="pregunta">Pregunta<small>en vivo</small></button>
 </div>
 
+<form id="sala">
+  <h1>Falta el código de sala</h1>
+  <p>Escaneá el QR de la pantalla de inicio de la presentación, o escribí el código. Queda guardado en este celular.</p>
+  <input id="salaCodigo" placeholder="smt-…" autocomplete="off" spellcheck="false" autocapitalize="off">
+  <button type="submit">Conectar</button>
+</form>
+
 <script>
 const $ = (id) => document.getElementById(id);
 // La pregunta en vivo de la botonera. Para elegir otra, usar control-completo.
 const PREGUNTA = 'Ehh, necesito llegar rápido al trabajo, ¿hay algún corte en la San Lorenzo hoy?';
-let ultimo = null;
+let ultimo = null, conectado = false, textoConexion = 'Conectando…';
+
 const remoto = window.Remoto.iniciar({
   rol: 'control',
-  alRecibirEstado: (e) => { ultimo = e; pintar(e); },
-  alCambiarConexion: (ok, txt) => { $('punto').classList.toggle('ok', ok); if (!ok) $('titulo').textContent = txt; },
+  alRecibirEstado: (e) => { ultimo = e; pintar(); },
+  alCambiarConexion: (ok, txt) => { conectado = ok; textoConexion = txt; pintar(); },
 });
+if (remoto.modo === 'sin-sala') {
+  $('sala').classList.add('ver');
+  $('sala').addEventListener('submit', (e) => { e.preventDefault(); const v = $('salaCodigo').value.trim(); if (v) remoto.guardarSala(v); });
+}
 
-// Un toque = una orden. Se ignoran los toques repetidos muy seguidos, para
-// que un doble toque nervioso no salte dos placas.
+// Un toque = una orden, confirmada por la pantalla. Se ignoran los toques
+// repetidos muy seguidos, para que un doble toque nervioso no salte dos placas.
 const ultimoToque = {};
-function boton(id, accion) {
-  $(id).addEventListener('click', () => {
-    const ahora = Date.now(); if (ahora - (ultimoToque[id] || 0) < 700) return; ultimoToque[id] = ahora;
-    accion(); if (navigator.vibrate) navigator.vibrate(18);
+function boton(id, armar) {
+  const b = $(id);
+  b.addEventListener('click', () => {
+    const ahora = Date.now(); if (ahora - (ultimoToque[id] || 0) < 650) return; ultimoToque[id] = ahora;
+    if (navigator.vibrate) navigator.vibrate(18);
+    b.classList.remove('llego', 'fallo'); b.classList.add('enviando');
+    remoto.enviarComando(armar(), (ok) => {
+      b.classList.remove('enviando'); b.classList.add(ok ? 'llego' : 'fallo');
+      if (!ok && navigator.vibrate) navigator.vibrate([80, 60, 80]);
+      setTimeout(() => b.classList.remove('llego', 'fallo'), ok ? 450 : 1600);
+    });
   });
 }
-const enviar = (c) => remoto.enviarComando(c);
-boton('siguiente', () => enviar({ cmd: 'siguiente' }));
-boton('anterior', () => enviar({ cmd: 'anterior' }));
-boton('migue', () => enviar({ cmd: 'migue' }));
-boton('callar', () => enviar({ cmd: 'callar' }));
-boton('azahar', () => enviar({ cmd: 'azahar' }));
-boton('qr', () => enviar({ cmd: 'qr', on: !$('qr').classList.contains('on') }));
-boton('pregunta', () => enviar(ultimo && ultimo.vivo ? { cmd: 'cerrar-pregunta' } : { cmd: 'preguntar', texto: PREGUNTA }));
+boton('siguiente', () => ({ cmd: 'siguiente' }));
+boton('anterior', () => ({ cmd: 'anterior' }));
+boton('migue', () => ({ cmd: 'migue' }));
+boton('callar', () => ({ cmd: 'callar' }));
+boton('azahar', () => ({ cmd: 'azahar' }));
+boton('qr', () => ({ cmd: 'qr', on: !$('qr').classList.contains('on') }));
+boton('pregunta', () => (ultimo && ultimo.vivo ? { cmd: 'cerrar-pregunta' } : { cmd: 'preguntar', texto: PREGUNTA }));
 
-function pintar(e) {
-  $('punto').classList.add('ok');
-  $('titulo').textContent = e.empezado === false ? 'Tocá la pantalla grande para empezar' : (e.titulo || '');
+function pintar() {
+  const e = ultimo;
+  const sinEmpezar = conectado && e && e.empezado === false;
+  const alerta = !conectado || sinEmpezar;
+  $('estado').classList.toggle('alerta', alerta);
+  $('punto').classList.toggle('ok', conectado && !sinEmpezar);
+  $('titulo').textContent = !conectado ? textoConexion : sinEmpezar ? 'Tocá la pantalla grande para empezar' : ((e && e.titulo) || 'Conectado');
+  if (!e) return;
   $('num').textContent = `${e.placa}/${e.total}`;
   const v = e.videos || [];
   $('migue').classList.toggle('suena', !!e.hablando);
@@ -96,8 +137,10 @@ function pintar(e) {
 }
 
 // Que la pantalla del celular no se apague en medio de la charla.
-async function despierto() { try { if ('wakeLock' in navigator) await navigator.wakeLock.request('screen'); } catch (e) { } }
+let candado = null;
+async function despierto() { try { if ('wakeLock' in navigator && !candado) { candado = await navigator.wakeLock.request('screen'); candado.addEventListener('release', () => { candado = null; }); } } catch (e) { } }
 despierto(); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') despierto(); });
+document.addEventListener('click', despierto, { once: true });
 </script>
 </body>
 </html>

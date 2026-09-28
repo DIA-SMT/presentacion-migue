@@ -96,10 +96,23 @@ h1, h2, h3 { font-weight: 700; }
 #globo.blanco { background: var(--blanco); color: var(--azul); }
 
 /* ---------- Pantalla de inicio ---------- */
-#inicio { position: absolute; inset: 0; z-index: 10; background: var(--azul); color: var(--blanco); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; cursor: pointer; }
-#inicio img { width: 300px; }
-#inicio p { font-size: 40px; font-weight: 600; }
-#inicio small { font-size: 24px; opacity: .9; }
+#inicio { position: absolute; inset: 0; z-index: 10; background: var(--azul); color: var(--blanco); display: flex; align-items: center; justify-content: center; gap: 140px; cursor: pointer; }
+#inicio .ini-izq { display: flex; flex-direction: column; align-items: center; gap: 36px; }
+#inicio .ini-izq img { width: 300px; }
+#inicio .ini-izq p { font-size: 40px; font-weight: 600; }
+#inicio .ini-izq small { font-size: 24px; opacity: .9; }
+#inicio .ini-der { width: 420px; background: rgba(255,255,255,.12); border-radius: 36px; padding: 36px; display: flex; flex-direction: column; align-items: center; gap: 20px; cursor: default; }
+#inicio .ini-tit { font-size: 30px; font-weight: 700; }
+#inicio .ini-qr { width: 300px; height: 300px; background: #fff; border-radius: 22px; padding: 16px; display: flex; align-items: center; justify-content: center; }
+#inicio .ini-qr svg { width: 100%; height: 100%; }
+#inicio .ini-estado { display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 600; text-align: center; }
+#inicio .ini-estado i { width: 16px; height: 16px; border-radius: 50%; background: #e5484d; flex: none; }
+#inicio .ini-estado.ok i { background: #3ecf8e; box-shadow: 0 0 0 6px rgba(62,207,142,.25); }
+#inicio .ini-sala { display: flex; flex-direction: column; gap: 12px; width: 100%; }
+#inicio .ini-sala[hidden] { display: none; }
+#inicio .ini-sala label { font-size: 24px; font-weight: 700; color: var(--amarillo); text-align: center; }
+#inicio .ini-sala input { font: 600 28px Poppins, sans-serif; padding: 14px 18px; border-radius: 16px; border: 0; text-align: center; }
+#inicio .ini-sala button { font: 700 26px Poppins, sans-serif; padding: 14px; border-radius: 16px; border: 0; background: var(--amarillo); color: var(--gris); cursor: pointer; }
 
 /* ---------- Ayuda (tecla ?) ---------- */
 #ayuda { position: absolute; left: 40px; bottom: 40px; z-index: 9; background: rgba(20,24,32,.92); color: #fff; border-radius: 20px; padding: 28px 36px; font-size: 22px; line-height: 1.6; display: none; }
@@ -621,12 +634,25 @@ h1, h2, h3 { font-weight: 700; }
 </div>
 
 <div id="inicio">
-  <img src="img/logo-vertical-blanco.png" alt="">
-  <p>Tocá o apretá una tecla para empezar</p>
-  <small>Activa el sonido de Migue y la pantalla completa</small>
+  <div class="ini-izq">
+    <img src="img/logo-vertical-blanco.png" alt="">
+    <p>Tocá o apretá una tecla para empezar</p>
+    <small>Activa el sonido de Migue y la pantalla completa</small>
+  </div>
+  <div class="ini-der" id="vinculo">
+    <p class="ini-tit">Botonera del celular</p>
+    <div class="ini-qr" id="vinculoQr"></div>
+    <p class="ini-estado" id="vinculoEstado"><i></i><span>Conectando…</span></p>
+    <form class="ini-sala" id="vinculoForm" hidden>
+      <label for="vinculoCodigo">Falta el código de sala</label>
+      <input id="vinculoCodigo" placeholder="smt-…" autocomplete="off" spellcheck="false">
+      <button type="submit">Guardar</button>
+    </form>
+  </div>
 </div>
 </div>
 
+<script src="lib/qrcode.js"></script>
 <script src="efectos.js"></script>
 <script>
 // =====================================================================
@@ -1223,6 +1249,7 @@ async function empezar() {
 document.getElementById('inicio').addEventListener('click', empezar);
 
 addEventListener('keydown', (e) => {
+  if (e.target && e.target.closest && e.target.closest('#vinculo')) return; // escribiendo el código de sala
   if (!empezado) { empezar(); return; }
   const k = e.key;
   if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); cambiar(actual + 1); }
@@ -1250,7 +1277,30 @@ const remoto = window.Remoto.iniciar({
   alRecibirComando: (c) => { if (empezado) ejecutar(c); },
 });
 remoto.pedirEstado = () => informar();
-setInterval(() => informar(), 3000); // latido: el control sabe que la pantalla sigue ahí
+setInterval(() => informar(), 2000); // latido: el celular sabe que la pantalla sigue ahí
+
+// Pantalla de inicio: QR para abrir la botonera ya vinculada, y si hay un celular conectado.
+(async function vincular() {
+  const caja = document.getElementById('vinculo'), qr = document.getElementById('vinculoQr'), est = document.getElementById('vinculoEstado');
+  caja.addEventListener('click', (e) => e.stopPropagation());
+  if (remoto.modo === 'sin-sala' || remoto.modo === 'ninguno') {
+    qr.style.display = 'none';
+    est.querySelector('span').textContent = remoto.modo === 'ninguno' ? 'Sin control remoto en este modo' : 'Sin código, el celular no puede manejar la presentación';
+    if (remoto.modo === 'sin-sala') {
+      const f = document.getElementById('vinculoForm'); f.hidden = false;
+      f.addEventListener('submit', (e) => { e.preventDefault(); const v = document.getElementById('vinculoCodigo').value.trim(); if (v) remoto.guardarSala(v); });
+    }
+    return;
+  }
+  const link = await remoto.linkControl();
+  try { const q = qrcode(0, 'M'); q.addData(link); q.make(); qr.innerHTML = q.createSvgTag({ cellSize: 8, margin: 0, scalable: true }); } catch (e) { qr.textContent = link; }
+  const pintar = async () => {
+    const ok = await remoto.controlVivo();
+    est.classList.toggle('ok', ok);
+    est.querySelector('span').textContent = ok ? 'Celular conectado' : 'Escaneá con el celular';
+  };
+  pintar(); setInterval(pintar, 1500);
+})();
 function informar() {
   const p = placas[actual];
   const estado = {
