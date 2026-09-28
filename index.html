@@ -355,16 +355,50 @@ h1, h2, h3 { font-weight: 700; }
 .tb-mini { display: block; font-size: 20px; color: #9aa6b8; margin-top: 4px; }
 </style>
 
-<!-- ===================== 13. LA SEÑAL ===================== -->
-<section class="slide light" data-escena="mapa" data-globo="Cuando se juntan, ya no es casualidad." data-globo-demora="9000"
-  data-notas="Una conversación es una respuesta; cien parecidas en el mismo lugar son una señal de algo que está pasando en una zona. Eso permite pasar de una administración que solo reacciona a una que entiende lo que ocurre. OJO: es la dirección en la que avanzamos, no una función terminada.">
-  <div class="marco"></div><p class="rotulo"><b>Migue</b> hacia dónde vamos</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+<!-- ===================== 12. ESCUCHAR DE OTRA MANERA ===================== -->
+<section class="slide light" data-escena="escucha" data-globo="Y no me canso de escuchar." data-globo-demora="8200"
+  data-notas="Antes, para que el Municipio escuchara al vecino, el vecino tenía que llegar a una oficina. Hoy cada pregunta queda registrada y se ordena sola: qué necesita la ciudad, cuándo lo necesita y qué información le falta encontrar. Las preguntas que Migue todavía no sabe responder son las más valiosas: nos dicen qué mejorar. No hace falta esperar un informe: lo vemos en el momento.">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> escuchar</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
   <div class="cont" style="gap:14px">
-    <p class="ceja azul a">Hacia dónde vamos</p>
-    <h2 class="t2 a" style="--d:.15s">Cien reclamos parecidos no son cien conversaciones: son una señal.</h2>
+    <h2 class="t2 a">Escuchamos al vecino de otra manera.</h2>
+    <p class="cuerpo suave a" style="--d:.2s">Cada pregunta nos dice qué necesita la ciudad, cuándo y qué le falta encontrar.</p>
   </div>
-  <canvas class="mapa" width="2380" height="960" style="position:absolute; left:208px; top:450px; width:1190px; height:480px; border-radius:32px"></canvas>
+  <canvas class="escucha" width="2380" height="920" style="position:absolute; left:208px; top:470px; width:1190px; height:460px; border-radius:32px"></canvas>
 </section>
+
+<!-- ===================== 13. UN SERVICIO PÚBLICO 24/7 ===================== -->
+<section data-transicion="petalo" class="slide blue"
+  data-notas="Por primera vez en Tucumán, la inteligencia artificial está puesta como un servicio público: para el ciudadano que busca informarse, gestionar sus trámites y recibir respuestas especializadas. Y no tiene horario de atención: está las 24 horas, los 7 días.">
+  <p class="rotulo"><b>Migue</b> un servicio público</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
+  <div class="cont" style="gap:52px">
+    <div class="a">
+      <p class="ceja amarillo" style="margin-bottom:14px">Por primera vez en Tucumán</p>
+      <h2 style="font-size:76px; line-height:1.1; font-weight:800; letter-spacing:-1.5px">La inteligencia artificial es un servicio público.</h2>
+    </div>
+    <div style="display:flex; align-items:center; gap:48px">
+      <div class="usos">
+        <div class="uso a izq" style="--d:.6s"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg></span><div><b>Para informarse</b><em>sobre la ciudad y sus servicios</em></div></div>
+        <div class="uso a izq" style="--d:1s"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4h6l1 2h3v14H5V6h3z"/><path d="M9 13l2 2 4-4"/></svg></span><div><b>Para gestionar sus trámites</b><em>requisitos, turnos y seguimiento</em></div></div>
+        <div class="uso a izq" style="--d:1.4s"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8M8 13h5"/></svg></span><div><b>Con respuestas especializadas</b><em>con información oficial del municipio</em></div></div>
+      </div>
+      <div class="sello a pop" style="--d:1.9s"><i></i><b>24/7</b><span>todos los días,<br>a toda hora</span></div>
+    </div>
+  </div>
+</section>
+
+<style>
+.usos { flex: 1; display: flex; flex-direction: column; gap: 22px; }
+.uso { display: flex; align-items: center; gap: 24px; }
+.uso .ic { width: 76px; height: 76px; border-radius: 22px; background: rgba(255,255,255,.16); display: flex; align-items: center; justify-content: center; flex: none; }
+.uso .ic svg { width: 42px; height: 42px; }
+.uso b { display: block; font-size: 40px; line-height: 1.15; font-weight: 700; }
+.uso em { display: block; font-style: normal; font-size: 26px; opacity: .85; margin-top: 2px; }
+.sello { position: relative; width: 320px; height: 320px; border-radius: 50%; background: var(--amarillo); color: var(--gris); display: flex; flex-direction: column; align-items: center; justify-content: center; flex: none; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+.sello i { position: absolute; inset: -18px; border-radius: 50%; border: 4px dashed rgba(255,255,255,.75); animation: girar 14s linear infinite; }
+.sello b { font-size: 104px; line-height: 1; font-weight: 800; letter-spacing: -3px; }
+.sello span { font-size: 24px; font-weight: 600; text-align: center; line-height: 1.25; margin-top: 8px; }
+@keyframes girar { to { transform: rotate(360deg); } }
+</style>
 
 <!-- ===================== 14. TRES DIMENSIONES ===================== -->
 <section class="slide light"
@@ -924,6 +958,75 @@ const escenas = (() => {
     }
     raf = requestAnimationFrame(cuadro);
     return () => { vivo = false; cancelAnimationFrame(raf); tl.forEach(clearTimeout); clearTimeout(tt); };
+  };
+
+  // --- Escuchar de otra manera: las preguntas llegan sueltas y se ordenan solas por tema
+  reg.escucha = (p) => {
+    const cv = p.querySelector('canvas.escucha'), x = cv.getContext('2d'); x.setTransform(2, 0, 0, 2, 0, 0);
+    const W = 1190, H = 460;
+    // Cantidades reales del panel de Migue (septiembre de 2026).
+    const G = [
+      { n: 'Trámites', c: '8.906', v: 8906, x: 250, y: 250, col: '#0066ff' },
+      { n: 'Turnos', c: '933', v: 933, x: 560, y: 140, col: '#2eb1ff' },
+      { n: 'Oficinas', c: '369', v: 369, x: 560, y: 330, col: '#3ecf8e' },
+      { n: 'Agenda', c: '173', v: 173, x: 800, y: 130, col: '#f4a300' },
+      { n: 'Cortes', c: '51', v: 51, x: 820, y: 325, col: '#e879b6' },
+      { n: 'Historia', c: '8', v: 8, x: 1030, y: 240, col: '#6b7890' },
+    ];
+    G.forEach(g => g.r = 34 + 104 * Math.sqrt(g.v / 8906));
+    const F = [
+      ['¿Qué necesito para la licencia?', 0], ['¿Hay turno para el oculista?', 1], ['¿Está cortada la San Lorenzo?', 4],
+      ['¿Dónde saco el libre deuda?', 0], ['¿A qué hora abre Rentas?', 2], ['¿Qué hay este finde?', 3],
+      ['¿Cómo habilito un comercio?', 0], ['¿Tengo un turno sacado?', 1], ['¿Dónde queda Catastro?', 2],
+      ['¿Cuándo se fundó la ciudad?', 5],
+    ];
+    // Se acomodan en filas, como mensajes que van llegando, sin pisarse.
+    x.font = '600 23px Poppins';
+    let cx0 = 24, fila = 0;
+    const B = F.map(([t, g]) => {
+      const w = x.measureText(t).width + 40;
+      if (cx0 + w > W - 20) { fila++; cx0 = 24 + (fila % 2) * 46; }
+      const b = { t, g, w, h: 50, x: cx0, y: 24 + fila * 88 };
+      cx0 += w + 26; return b;
+    });
+    const CICLO = 14000, t0 = performance.now(); let raf, vivo = true;
+    const suave = f => { f = Math.max(0, Math.min(1, f)); return f < .5 ? 2 * f * f : 1 - Math.pow(-2 * f + 2, 2) / 2; };
+    function rr(a, b, w, h, q) { x.beginPath(); x.moveTo(a + q, b); x.arcTo(a + w, b, a + w, b + h, q); x.arcTo(a + w, b + h, a, b + h, q); x.arcTo(a, b + h, a, b, q); x.arcTo(a, b, a + w, b, q); x.closePath(); }
+    function draw(now) {
+      if (!vivo) return;
+      const t = (now - t0) % CICLO, fin = t > 12800 ? 1 - (t - 12800) / 1200 : 1;
+      x.clearRect(0, 0, W, H); x.fillStyle = '#f2f6ff'; x.fillRect(0, 0, W, H);
+      x.globalAlpha = fin;
+      // Grupos: aparecen cuando las preguntas llegan a su lugar.
+      const fg = suave((t - 7000) / 900);
+      G.forEach(g => {
+        if (fg <= 0) return;
+        x.fillStyle = g.col; x.globalAlpha = fin * 0.95; x.beginPath(); x.arc(g.x, g.y, g.r * fg, 0, 7); x.fill();
+        x.globalAlpha = fin * fg; x.textAlign = 'center'; x.textBaseline = 'middle';
+        const dentro = g.r > 70;
+        x.fillStyle = dentro ? '#ffffff' : '#333333';
+        const ly = dentro ? g.y - 14 : g.y + g.r + 24;
+        x.font = '700 26px Poppins'; x.fillText(g.n, g.x, ly);
+        x.font = '600 22px Poppins'; x.fillStyle = dentro ? '#ffffff' : '#5a6270'; x.fillText(g.c + ' consultas', g.x, ly + 28);
+      });
+      x.globalAlpha = fin;
+      // Preguntas: entran una por una y después viajan a su tema.
+      B.forEach((b, i) => {
+        const tin = 300 + i * 420; if (t < tin) return;
+        const fi = Math.min(1, (t - tin) / 350), fm = suave((t - 5600 - i * 60) / 1300);
+        if (fm >= 1) return;
+        const g = G[b.g], cx = b.x + b.w / 2, cy = b.y + b.h / 2;
+        const px = cx + (g.x - cx) * fm, py = cy + (g.y - cy) * fm, esc = (1 - fm * 0.85) * (0.8 + 0.2 * fi);
+        x.save(); x.translate(px, py); x.scale(esc, esc); x.globalAlpha = fin * fi * (1 - fm * 0.6);
+        x.shadowColor = 'rgba(20,30,60,.12)'; x.shadowBlur = 14; x.shadowOffsetY = 4;
+        rr(-b.w / 2, -b.h / 2, b.w, b.h, 25); x.fillStyle = fm > 0.3 ? g.col : '#ffffff'; x.fill(); x.shadowBlur = 0; x.shadowOffsetY = 0;
+        x.fillStyle = fm > 0.3 ? '#ffffff' : '#333333'; x.font = '600 23px Poppins'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(b.t, 0, 1);
+        x.restore();
+      });
+      x.globalAlpha = 1; raf = requestAnimationFrame(draw);
+    }
+    raf = requestAnimationFrame(draw);
+    return () => { vivo = false; cancelAnimationFrame(raf); };
   };
 
   // --- Los datos: los números cuentan solos y las barras crecen
