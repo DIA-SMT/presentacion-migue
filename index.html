@@ -270,8 +270,8 @@ h1, h2, h3 { font-weight: 700; }
 </section>
 
 <!-- ===================== 10. EN VIVO: ESCRIBILE ===================== -->
-<section data-transicion="petalo" class="slide blue" data-escena="precarga" data-globo="¡Dale, escribime!" data-globo-estilo="blanco" data-globo-demora="1500"
-  data-notas="Invitar a la sala a escribirle a Migue ahora, por la web o por Telegram. Dar un minuto. Después pasar a la placa siguiente: el panel de Migue en vivo, para ver lo que están preguntando y analizarlo juntos.">
+<section data-transicion="petalo" class="slide blue" data-globo="¡Dale, escribime!" data-globo-estilo="blanco" data-globo-demora="1500"
+  data-notas="Invitar a la sala a escribirle a Migue ahora, por la web o por Telegram. Dar un minuto. Si querés mostrar lo que están preguntando en el panel real, tecla D (lo abre en otra pestaña). Después, la placa siguiente: cómo se ve el panel de Migue.">
   <p class="rotulo"><b>Migue</b> en vivo</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
   <div class="cont" style="gap:44px">
     <h2 class="t2 a">Escribile a Migue ahora.</h2>
@@ -283,35 +283,77 @@ h1, h2, h3 { font-weight: 700; }
   </div>
 </section>
 
-<!-- ===================== 11. EL PANEL EN VIVO ===================== -->
-<section class="slide dark" data-escena="panel"
-  data-notas="El panel de Migue en vivo (migue.smt.gob.ar/dashboard). Mostrar el Dashboard, el Corazón y el Clima Ciudadano mientras la sala escribe. OJO: acá se ven mensajes reales. Si hacés clic adentro del panel, el teclado queda en el panel: pasá de placa con el control del celular, o hacé clic afuera del panel. Tecla D: abre el panel en otra pestaña (respaldo).">
-  <p class="rotulo"><b>Migue</b> panel en vivo</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
-  <div class="panel-marco"><iframe title="Panel de Migue" data-src="https://migue.smt.gob.ar/dashboard/" allow="fullscreen"></iframe></div>
-</section>
-
-<!-- ===================== 12. LOS DATOS ===================== -->
-<section data-transicion="petalo" class="slide blue" data-escena="datos"
-  data-notas="Lo que vimos, en números (panel de Migue, septiembre de 2026): más de 13.000 consultas, casi 5.000 vecinos distintos, 9 de cada 10 con respuesta concreta. Tres de cada cuatro consultas son sobre trámites. Es la demanda real del vecino, no la que se supone. Y las que no se pudieron responder le dicen al municipio qué información falta cargar. ACTUALIZAR los números el día del evento.">
-  <p class="rotulo"><b>Migue</b> lo que vemos</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
-  <div class="cont" style="gap:36px">
-    <h2 class="t2 a">Cada conversación es un dato.</h2>
-    <div style="display:flex; gap:40px">
-      <div class="cifra a" style="--d:.3s"><b data-n="13022">0</b><p>consultas atendidas</p></div>
-      <div class="cifra a" style="--d:.5s"><b data-n="4964">0</b><p>vecinos distintos</p></div>
-      <div class="cifra a" style="--d:.7s"><b data-n="89" data-suf="%">0</b><p>con respuesta concreta</p></div>
+<!-- ===================== 11. EL TABLERO DE MIGUE ===================== -->
+<section data-transicion="petalo" class="slide dark" data-escena="tablero" data-disco="#243047" style="background:#0f1623"
+  data-notas="Así se ve lo que ve el Municipio: el panel de control de Migue, con datos reales (septiembre de 2026). Más de 13.000 consultas, casi 5.000 vecinos distintos, 9 de cada 10 con respuesta concreta. Tres de cada cuatro consultas son sobre trámites: es la demanda real del vecino, no la que se supone. El corazón late con cada consulta y el clima ciudadano lee el tono de las últimas conversaciones. Las consultas que no se pudieron responder le dicen al municipio qué información falta cargar. Si querés mostrar el panel real, tecla D. ACTUALIZAR los números el día del evento (están en el HTML, en la placa 'El tablero de Migue').">
+  <p class="rotulo"><b>Migue</b> lo que ve el Municipio</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
+  <div class="tablero">
+    <div class="tb-cab a">
+      <p class="ceja amarillo">Panel de control de Migue</p>
+      <h2>Cada conversación es un dato.</h2>
     </div>
-    <div class="temas a" style="--d:1s">
-      <p class="ceja amarillo" style="margin-bottom:6px">Qué le pregunta la ciudad</p>
-      <div class="tema"><span>Trámites</span><i data-v="8906"></i><em>8.906</em></div>
-      <div class="tema"><span>Consultas generales</span><i data-v="1494"></i><em>1.494</em></div>
-      <div class="tema"><span>Turnos</span><i data-v="933"></i><em>933</em></div>
-      <div class="tema"><span>Oficinas y horarios</span><i data-v="369"></i><em>369</em></div>
-      <div class="tema"><span>Estado de reclamos</span><i data-v="275"></i><em>275</em></div>
+    <div class="tb-kpis">
+      <div class="tb-kpi a pop" style="--d:.3s"><b data-n="13022">0</b><span>consultas</span></div>
+      <div class="tb-kpi a pop" style="--d:.45s"><b data-n="89" data-suf="%" style="color:#3ecf8e">0</b><span>resueltas</span></div>
+      <div class="tb-kpi a pop" style="--d:.6s"><b data-n="4964" style="color:#2eb1ff">0</b><span>vecinos distintos</span></div>
+      <div class="tb-kpi a pop" style="--d:.75s"><b data-n="49" style="color:#f4dc00">0</b><span>audios transcriptos</span></div>
+    </div>
+    <div class="tb-fila">
+      <div class="tb-card a" style="--d:.9s; width:560px">
+        <p class="tb-tit">Qué le pregunta la ciudad</p>
+        <div class="tb-dona"><canvas class="dona" width="460" height="460"></canvas><div class="tb-centro"><b>3 de 4</b><span>son trámites</span></div><ul class="tb-leyenda"></ul></div>
+      </div>
+      <div class="tb-card a" style="--d:1.1s; flex:1">
+        <p class="tb-tit">Actividad de los últimos 7 días</p>
+        <canvas class="barras" width="1160" height="520"></canvas>
+      </div>
+    </div>
+    <div class="tb-fila">
+      <div class="tb-card a" style="--d:1.3s; flex:1">
+        <p class="tb-tit"><span class="tb-latido"></span>Corazón de Migue · en vivo</p>
+        <canvas class="corazon" width="1300" height="220"></canvas>
+      </div>
+      <div class="tb-card a" style="--d:1.5s; width:500px">
+        <p class="tb-tit">Clima ciudadano</p>
+        <div class="tb-clima">
+          <div class="tb-termo"><i></i></div>
+          <div><b class="tb-grados" data-n="59" data-suf="°">0°</b><span class="tb-neutro">Clima neutro</span><span class="tb-mini">Lee el tono de las últimas 50 consultas</span></div>
+        </div>
+      </div>
     </div>
   </div>
-  <p class="chico" style="position:absolute; left:208px; top:975px; opacity:.85">Panel de control de Migue, septiembre de 2026.</p>
 </section>
+
+<style>
+.tablero { position: absolute; left: 150px; top: 132px; width: 1250px; height: 890px; display: flex; flex-direction: column; gap: 18px; color: #e8edf5; }
+.tb-cab h2 { font-size: 58px; line-height: 1.1; font-weight: 800; letter-spacing: -1px; color: #fff; margin-top: 4px; }
+.tb-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.tb-kpi { background: #1a2332; border: 1px solid #243047; border-radius: 24px; padding: 14px 22px; display: flex; flex-direction: column; gap: 2px; }
+.tb-kpi b { font-size: 54px; line-height: 1.05; font-weight: 800; letter-spacing: -2px; font-variant-numeric: tabular-nums; color: #fff; }
+.tb-kpi span { font-size: 24px; color: #9aa6b8; font-weight: 500; }
+.tb-fila { display: flex; gap: 16px; }
+.tb-card { background: #1a2332; border: 1px solid #243047; border-radius: 24px; padding: 14px 22px; display: flex; flex-direction: column; gap: 8px; }
+.tb-tit { font-size: 24px; font-weight: 700; color: #fff; display: flex; align-items: center; gap: 12px; }
+.tb-dona { position: relative; display: flex; align-items: center; gap: 22px; }
+.tb-dona canvas { width: 200px; height: 200px; flex: none; }
+.tb-centro { position: absolute; left: 0; top: 0; width: 200px; height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.tb-centro b { font-size: 34px; font-weight: 800; color: #fff; line-height: 1; }
+.tb-centro span { font-size: 20px; color: #9aa6b8; }
+.tb-leyenda { list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 21px; }
+.tb-leyenda li { display: flex; align-items: center; gap: 10px; opacity: 0; transform: translateX(10px); transition: opacity .4s ease, transform .4s ease; }
+.tb-leyenda li.ver { opacity: 1; transform: none; }
+.tb-leyenda i { width: 16px; height: 16px; border-radius: 5px; flex: none; }
+.tb-card canvas.barras { width: 500px; height: 224px; }
+.tb-card canvas.corazon { width: 620px; height: 105px; }
+.tb-latido { width: 14px; height: 14px; border-radius: 50%; background: #e5484d; box-shadow: 0 0 0 0 rgba(229,72,77,.6); animation: pulso-rojo 1.1s infinite; }
+@keyframes pulso-rojo { 0% { box-shadow: 0 0 0 0 rgba(229,72,77,.6); } 100% { box-shadow: 0 0 0 16px rgba(229,72,77,0); } }
+.tb-clima { display: flex; align-items: center; gap: 28px; }
+.tb-termo { position: relative; width: 34px; height: 96px; border-radius: 18px; background: #0c121c; border: 2px solid #2b3850; overflow: hidden; flex: none; }
+.tb-termo i { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: linear-gradient(to top, #2eb1ff, #3ecf8e 45%, #f4dc00 70%, #e5484d); transition: height 1.8s cubic-bezier(.2,.8,.2,1); }
+.tb-grados { display: block; font-size: 56px; line-height: 1; font-weight: 800; color: #fff; font-variant-numeric: tabular-nums; }
+.tb-neutro { display: block; font-size: 26px; font-weight: 700; color: #3ecf8e; margin-top: 4px; }
+.tb-mini { display: block; font-size: 20px; color: #9aa6b8; margin-top: 4px; }
+</style>
 
 <!-- ===================== 13. LA SEÑAL ===================== -->
 <section class="slide light" data-escena="mapa" data-globo="Cuando se juntan, ya no es casualidad." data-globo-demora="9000"
@@ -569,7 +611,7 @@ function irA(n) {
   escenas.arrancar(p);
   // Disco detrás de Migue según el fondo de la placa.
   const disco = document.getElementById('disco');
-  disco.style.background = p.classList.contains('light') ? '#e8f0ff' : p.classList.contains('dark') ? '#474747' : '#f4dc00';
+  disco.style.background = p.dataset.disco || (p.classList.contains('light') ? '#e8f0ff' : p.classList.contains('dark') ? '#474747' : '#f4dc00');
   mostrarGlobo(p);
   informar();
 }
@@ -830,6 +872,59 @@ const escenas = (() => {
   function cargarPanel() { const f = document.querySelector('.panel-marco iframe'); if (f && !f.getAttribute('src')) f.src = f.dataset.src; }
   reg.precarga = () => { cargarPanel(); return () => { }; };
   reg.panel = () => { cargarPanel(); return () => { }; };
+
+  // --- El tablero: recreación animada del panel de Migue
+  reg.tablero = (p) => {
+    let vivo = true, raf; const t0 = performance.now();
+    const fmt = n => n.toLocaleString('es-AR');
+    const nums = [...p.querySelectorAll('[data-n]')];
+    const CATS = [['Trámites', 8906, '#0066ff'], ['Consultas generales', 1494, '#2eb1ff'], ['Turnos', 933, '#f4dc00'], ['Oficinas y horarios', 369, '#3ecf8e'], ['Estado de reclamos', 275, '#e879b6'], ['Otros temas', 438, '#6b7890']];
+    const total = CATS.reduce((a, c) => a + c[1], 0);
+    const ley = p.querySelector('.tb-leyenda');
+    ley.innerHTML = CATS.map(c => `<li><i style="background:${c[2]}"></i>${c[0]}</li>`).join('');
+    const tl = [...ley.children].map((li, i) => setTimeout(() => li.classList.add('ver'), 1300 + i * 140));
+    // Consultas por día: lectura del gráfico del panel al 28/9/2026.
+    const DIAS = [['mar', 140], ['mié', 137], ['jue', 80], ['vie', 182], ['sáb', 45], ['dom', 92], ['lun', 258]];
+    const dona = p.querySelector('canvas.dona').getContext('2d');
+    const barras = p.querySelector('canvas.barras').getContext('2d');
+    const cor = p.querySelector('canvas.corazon').getContext('2d');
+    const termo = p.querySelector('.tb-termo i'); termo.style.height = '0';
+    const tt = setTimeout(() => termo.style.height = '59%', 1700);
+    const N = 220, Y = new Array(N).fill(0), S = [0, 0, -4, -7, -4, 0, 0, 5, -34, 44, -15, 0, 0, 0, -6, -10, -12, -10, -6, 0];
+    let k = 99, nx = 20, tk = 0;
+    const suave = f => 1 - Math.pow(1 - Math.max(0, Math.min(1, f)), 3);
+    function cuadro(now) {
+      if (!vivo) return;
+      const t = now - t0;
+      nums.forEach(n => { const e = suave((t - 500) / 1800); n.textContent = fmt(Math.round(+n.dataset.n * e)) + (n.dataset.suf || ''); });
+      // Dona de temas
+      const fd = suave((t - 1000) / 1400); let ang = -Math.PI / 2;
+      dona.clearRect(0, 0, 460, 460); dona.lineWidth = 56;
+      dona.strokeStyle = '#243047'; dona.beginPath(); dona.arc(230, 230, 180, 0, 7); dona.stroke();
+      CATS.forEach(c => { const a = (c[1] / total) * Math.PI * 2 * fd; dona.strokeStyle = c[2]; dona.beginPath(); dona.arc(230, 230, 180, ang, ang + a); dona.stroke(); ang += a; });
+      // Barras de la semana
+      const W = 1160, H = 520, base = 450, max = 280; barras.clearRect(0, 0, W, H);
+      barras.strokeStyle = '#243047'; barras.lineWidth = 2;
+      for (let g = 0; g <= 3; g++) { const y = base - g * 130; barras.beginPath(); barras.moveTo(0, y); barras.lineTo(W, y); barras.stroke(); }
+      const bw = 110, paso = W / DIAS.length;
+      DIAS.forEach(([dia, v], i) => {
+        const fb = suave((t - 1200 - i * 110) / 900), h = (v / max) * 400 * fb, x = i * paso + (paso - bw) / 2;
+        barras.fillStyle = i === DIAS.length - 1 ? '#f4dc00' : '#4f5bd5';
+        barras.beginPath(); if (barras.roundRect) barras.roundRect(x, base - h, bw, h, [14, 14, 0, 0]); else barras.rect(x, base - h, bw, h); barras.fill();
+        barras.fillStyle = '#9aa6b8'; barras.font = '600 34px Poppins'; barras.textAlign = 'center'; barras.fillText(dia, x + bw / 2, base + 50);
+      });
+      // Corazón de Migue
+      tk++; if (tk >= nx) { k = 0; nx = tk + 34 + Math.floor(Math.random() * 30); }
+      Y.push((k < S.length ? S[k] : 0) + (Math.random() - .5) * 1.5); k++; Y.shift();
+      cor.clearRect(0, 0, 1300, 220); cor.lineWidth = 6; cor.strokeStyle = '#e5484d'; cor.lineJoin = 'round';
+      cor.shadowColor = 'rgba(229,72,77,.7)'; cor.shadowBlur = 16; cor.beginPath();
+      for (let i = 0; i < N; i++) { const px = i * (1280 / (N - 1)), py = 110 + Y[i] * 2; if (i) cor.lineTo(px, py); else cor.moveTo(px, py); }
+      cor.stroke(); cor.shadowBlur = 0; cor.fillStyle = '#fff'; cor.beginPath(); cor.arc(1280, 110 + Y[N - 1] * 2, 9, 0, 7); cor.fill();
+      raf = requestAnimationFrame(cuadro);
+    }
+    raf = requestAnimationFrame(cuadro);
+    return () => { vivo = false; cancelAnimationFrame(raf); tl.forEach(clearTimeout); clearTimeout(tt); };
+  };
 
   // --- Los datos: los números cuentan solos y las barras crecen
   reg.datos = (p) => {
