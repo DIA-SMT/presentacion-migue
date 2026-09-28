@@ -20,7 +20,8 @@ Presentación del lanzamiento de Migue, el asistente virtual de la Municipalidad
 **Control remoto (celular):** la pantalla y el celular se abren con el mismo código de sala en el link:
 
 - Pantalla: `https://migue-presentacion.vercel.app/?sala=CODIGO`
-- Celular: `https://migue-presentacion.vercel.app/control?sala=CODIGO`
+- Celular: `https://migue-presentacion.vercel.app/control?sala=CODIGO` (botonera)
+- Consola completa: `https://migue-presentacion.vercel.app/control-completo?sala=CODIGO`
 
 Publicada, se comunican por un canal en tiempo real de Supabase (`remoto.js`, `config.js`). En local, por `server.js`. El código de sala va solo en el link, nunca en el repo.
 
@@ -35,7 +36,8 @@ Publicada, se comunican por un canal en tiempo real de Supabase (`remoto.js`, `c
 ## Archivos
 
 - `index.html` — placas, Migue (recorte WebGL) y escenas animadas. La lista `VIDEOS` define el orden y el nombre de cada video.
-- `control.html` — consola del celular: placas y notas, videos de Migue, pregunta en vivo y efectos.
+- `control.html` — botonera del celular para el evento: Migue habla, Siguiente, Anterior, Callar, Azahar, QR y Pregunta en vivo.
+- `control-completo.html` — consola completa de respaldo: notas, lista de placas y videos, preguntas a elección y todos los efectos.
 - `efectos.js` / `efectos.css` — recursos en vivo.
 - `media/` — videos de Migue sobre verde (`migue*.mp4`) y loops de espera (`migueloop*.mp4`).
 - `server.js` — servidor local para usarla sin internet.
