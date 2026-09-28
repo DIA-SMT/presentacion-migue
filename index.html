@@ -213,7 +213,7 @@ h1, h2, h3 { font-weight: 700; }
 
 <!-- ===================== 6. EN ACCIÓN ===================== -->
 <section class="slide light" data-escena="chat" data-globo="Y como ya entraste, sé que sos vos." data-globo-demora="11000"
-  data-notas="Migue vive dentro del Ciudadano Digital: el mismo lugar donde el vecino ya hace sus trámites, a un clic, sin instalar nada. Como el vecino ya entró con su cuenta, Migue sabe quién es sin pedirle DNI ni CUIL, y puede contestarle por SUS turnos y SUS reclamos. Sin sesión iniciada, no hay datos personales. La conversación es una simulación ilustrativa.">
+  data-notas="Migue está en el Ciudadano Digital, en smt.gob.ar y en Telegram. En el Ciudadano Digital vive en el mismo lugar donde el vecino ya hace sus trámites, a un clic, sin instalar nada. Como el vecino ya entró con su cuenta, Migue sabe quién es sin pedirle DNI ni CUIL, y puede contestarle por SUS turnos y SUS reclamos. Sin sesión iniciada, no hay datos personales. La conversación es una simulación ilustrativa.">
   <div class="marco"></div><p class="rotulo"><b>Migue</b> en acción</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
   <div class="cont" style="flex-direction:row; align-items:center; gap:70px">
     <div style="width:640px; display:flex; flex-direction:column; gap:32px">
@@ -232,12 +232,12 @@ h1, h2, h3 { font-weight: 700; }
 
 <!-- ===================== 7. HACER ===================== -->
 <section class="slide light" data-escena="hub"
-  data-notas="Un sistema que entiende pero no puede hacer nada es un conversador simpático. Ninguna respuesta sale de la memoria del modelo: Migue consulta en el momento la guía de trámites, las oficinas, las autoridades, la agenda, los cortes y las noticias; y, con la sesión iniciada, los turnos y reclamos del vecino. También historia de la ciudad y la ayuda del Ciudadano Digital. Hoy vive en el Ciudadano Digital; está construido para conectarse a cualquier servicio SMT. Pie para Migue: 'Migue no responde de memoria: va a buscar el dato a donde corresponde.'">
+  data-notas="Un sistema que entiende pero no puede hacer nada es un conversador simpático. Ninguna respuesta sale de la memoria del modelo: Migue consulta en el momento la guía de trámites, las oficinas, las autoridades, la agenda, los cortes y las noticias; y, con la sesión iniciada, los turnos y reclamos del vecino. También historia de la ciudad y la ayuda del Ciudadano Digital. Hoy está en el Ciudadano Digital, en el sitio smt.gob.ar y en Telegram (@MigueSMT_bot): un solo cerebro, lo que se carga una vez sirve para todos los canales. Pie para Migue: 'Migue no responde de memoria: va a buscar el dato a donde corresponde.'">
   <div class="marco"></div><p class="rotulo"><b>Migue</b> hacer</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
   <div class="cont" style="width:470px; gap:32px">
     <h2 class="t2 a">Entender es el comienzo.</h2>
     <p class="cuerpo suave a" style="--d:.3s">Lo que importa es lo que puede consultar: en el momento, no una copia vieja.</p>
-    <p class="cuerpo azul a" style="--d:.6s; font-weight:600">Vive en el Ciudadano Digital. En camino a todos los servicios SMT.</p>
+    <p class="cuerpo azul a" style="--d:.6s; font-weight:600">En el Ciudadano Digital, en smt.gob.ar y en Telegram. Un solo cerebro para todos los canales.</p>
   </div>
   <canvas class="hub" width="1480" height="1520" style="position:absolute; left:700px; top:180px; width:740px; height:760px"></canvas>
   <img class="a pop" src="img/migue-cara.png" alt="" style="--d:.3s; position:absolute; left:970px; top:460px; width:200px; height:200px; border-radius:50%; background:var(--amarillo); border:6px solid var(--azul); object-fit:cover">
@@ -341,7 +341,7 @@ h1, h2, h3 { font-weight: 700; }
   <div class="cont centro" style="gap:40px">
     <img class="a pop" src="img/logo-vertical-blanco.png" alt="Ciudad San Miguel de Tucumán" style="width:320px">
     <h2 class="t2 a" style="--d:.4s">Hablale a Migue</h2>
-    <p class="cuerpo a" style="--d:.7s; font-weight:500">En el Ciudadano Digital · ciudaddigital.smt.gob.ar</p>
+    <p class="cuerpo a" style="--d:.7s; font-weight:500; text-align:center; line-height:1.6">Ciudadano Digital · smt.gob.ar<br>Telegram: @MigueSMT_bot</p>
   </div>
 </section>
 
@@ -683,7 +683,7 @@ const escenas = (() => {
   };
 
   // --- Fuentes conectadas
-  const FUENTES = ['Guía de trámites', 'Oficinas y horarios', 'Autoridades de cada área', 'Agenda de la ciudad', 'Cortes de tránsito', 'Noticias', 'Tus turnos', 'Tus reclamos'];
+  const FUENTES = ['Trámites y requisitos', 'Turnos y salud', 'Agenda cultural', 'Oficinas y autoridades', 'Cortes y noticias', 'Ayuda con CiDiTuc', 'Historia de la ciudad', 'Tus reclamos'];
 
   // --- El laberinto: el vecino va de oficina en oficina
   reg.laberinto = (p) => {
