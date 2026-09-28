@@ -14,6 +14,7 @@ Presentación del lanzamiento de Migue, el asistente virtual de la Municipalidad
 | Migue dice un video puntual | 1 … 8 |
 | Callar · repetir · volver al video 1 | S · R · 0 |
 | Ocultar a Migue · pantalla completa · ayuda | H · F · ? |
+| Abrir el panel de Migue en otra pestaña | D |
 
 **Control remoto (celular):** la pantalla y el celular se abren con el mismo código de sala en el link:
 
