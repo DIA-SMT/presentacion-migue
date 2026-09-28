@@ -1,0 +1,5 @@
+server.js
+INICIAR.bat
+.env*
+.vercel
+.gitignore

@@ -1,0 +1,810 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Migue — Presentación</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
+<script src="remoto.js"></script>
+<style>
+/* Tipografía institucional (Manual de Marca SMT): Poppins, archivos locales. */
+@font-face { font-family: 'Poppins'; font-weight: 400; src: url(fonts/Poppins-Regular.ttf); }
+@font-face { font-family: 'Poppins'; font-weight: 500; src: url(fonts/Poppins-Medium.ttf); }
+@font-face { font-family: 'Poppins'; font-weight: 600; src: url(fonts/Poppins-SemiBold.ttf); }
+@font-face { font-family: 'Poppins'; font-weight: 700; src: url(fonts/Poppins-Bold.ttf); }
+@font-face { font-family: 'Poppins'; font-weight: 800; src: url(fonts/Poppins-ExtraBold.ttf); }
+
+:root {
+  --azul: #0066ff; --celeste: #2eb1ff; --amarillo: #f4dc00; --gris: #333333;
+  --blanco: #ffffff; --suave: #5a6270; --panel: #f2f6ff; --linea: #c9ced6;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+body { font-family: 'Poppins', Arial, sans-serif; color: var(--gris); cursor: none; }
+body.cursor { cursor: default; }
+
+/* Escenario fijo de 1920×1080, escalado para entrar en la pantalla. */
+#stage { position: absolute; left: 50%; top: 50%; width: 1920px; height: 1080px; transform-origin: 0 0; overflow: hidden; background: var(--blanco); }
+
+/* ---------- Placas ---------- */
+.slide { position: absolute; inset: 0; opacity: 0; visibility: hidden; transition: opacity .6s ease, visibility 0s linear .6s; }
+.slide.on { opacity: 1; visibility: visible; transition: opacity .6s ease; }
+.slide.light { background: var(--blanco); color: var(--gris); }
+.slide.blue { background: var(--azul); color: var(--blanco); }
+.slide.dark { background: var(--gris); color: var(--blanco); }
+
+/* Marco de línea fina con esquina redondeada, como las páginas del manual. */
+.marco { position: absolute; left: 40px; top: 124px; width: 1840px; height: 892px; border-left: 2px solid var(--linea); border-bottom: 2px solid var(--linea); border-bottom-left-radius: 56px; }
+.rotulo { position: absolute; left: 40px; top: 60px; font-size: 24px; }
+.dark .rotulo, .blue .rotulo { color: var(--blanco); }
+.logo-sup { position: absolute; right: 40px; top: 40px; width: 182px; height: 60px; object-fit: contain; }
+
+/* Carril de contenido: deja libre la columna de la derecha, donde vive Migue. */
+.cont { position: absolute; left: 208px; top: 176px; width: 1190px; bottom: 128px; display: flex; flex-direction: column; gap: 44px; }
+.cont.centro { justify-content: center; }
+h1, h2, h3 { font-weight: 700; }
+.t1 { font-size: 120px; line-height: 1.05; font-weight: 800; letter-spacing: -2px; }
+.t2 { font-size: 72px; line-height: 1.15; letter-spacing: -1px; }
+.t3 { font-size: 44px; line-height: 1.2; }
+.cuerpo { font-size: 32px; line-height: 1.4; }
+.chico { font-size: 24px; line-height: 1.4; }
+.ceja { font-size: 24px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; }
+.azul { color: var(--azul); } .amarillo { color: var(--amarillo); } .suave { color: var(--suave); }
+
+.globo-cita { background: var(--panel); border-radius: 28px 28px 28px 6px; padding: 30px 36px; font-size: 32px; line-height: 1.35; box-shadow: 0 6px 24px rgba(20,30,60,.06); }
+.globo-cita.der { border-radius: 28px 28px 6px 28px; }
+.tarjeta { background: var(--panel); border-radius: 28px; padding: 44px; display: flex; flex-direction: column; gap: 18px; }
+.tarjeta.azulf { background: var(--azul); color: var(--blanco); }
+.tarjeta.grisf { background: var(--gris); color: var(--blanco); }
+
+/* "Traducción": el concepto técnico y cómo lo dice Migue. */
+.trad { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.trad .tec { font-size: 24px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; background: var(--gris); color: var(--blanco); border-radius: 999px; padding: 10px 24px; }
+.trad .flecha { display: none; }
+.trad .cri { font-size: 34px; font-weight: 600; color: var(--azul); }
+.blue .trad .cri, .dark .trad .cri { color: var(--amarillo); }
+
+/* ---------- Entradas animadas (se disparan al entrar a la placa) ---------- */
+.a { opacity: 0; }
+.on .a { animation: subir .7s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+.on .a.pop { animation-name: pop; animation-duration: .55s; }
+.on .a.izq { animation-name: izq; }
+.on .a.der { animation-name: der; }
+.on .a.fade { animation-name: fade; animation-duration: 1s; }
+@keyframes subir { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: none; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.6); } 70% { opacity: 1; transform: scale(1.04); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes izq { from { opacity: 0; transform: translateX(-60px); } to { opacity: 1; transform: none; } }
+@keyframes der { from { opacity: 0; transform: translateX(60px); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* ---------- Migue, suelto al costado ---------- */
+#migue { position: absolute; left: 1450px; top: 420px; width: 440px; height: 640px; pointer-events: none; transition: opacity .5s ease, transform .5s ease; }
+#migue.oculto { opacity: 0; transform: translateY(40px); }
+#disco { position: absolute; left: 10px; top: 120px; width: 420px; height: 420px; border-radius: 50%; background: #e8f0ff; transition: background .6s ease, transform .12s linear; }
+#piso { position: absolute; left: 90px; top: 578px; width: 260px; height: 36px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.28), rgba(0,0,0,0)); }
+#lienzo { position: absolute; left: 0; top: 0; width: 440px; height: 640px; }
+#habla { position: absolute; left: 50%; top: -30px; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; background: var(--gris); color: var(--blanco); border-radius: 999px; padding: 6px 22px 6px 8px; font-size: 22px; font-weight: 600; opacity: 0; transition: opacity .3s ease; white-space: nowrap; }
+#habla img { width: 40px; height: 40px; border-radius: 50%; background: var(--amarillo); object-fit: cover; }
+#habla .barras { display: flex; gap: 4px; align-items: center; height: 26px; }
+#habla .barras i { display: block; width: 5px; height: 6px; border-radius: 3px; background: var(--amarillo); }
+#migue.hablando #habla { opacity: 1; }
+
+/* Globo de diálogo de Migue (texto propio de cada placa). */
+#globo { position: absolute; left: 1440px; width: max-content; max-width: 450px; bottom: 640px; background: var(--amarillo); color: var(--gris); border-radius: 36px 36px 36px 8px; padding: 26px 32px; font-size: 32px; font-weight: 600; line-height: 1.3; box-shadow: 0 10px 36px rgba(20,30,60,.16); opacity: 0; transform: translateY(20px) scale(.9); transform-origin: 20% 100%; transition: opacity .35s ease, transform .35s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+#globo.ver { opacity: 1; transform: none; }
+#globo.blanco { background: var(--blanco); color: var(--azul); }
+
+/* ---------- Pantalla de inicio ---------- */
+#inicio { position: absolute; inset: 0; z-index: 10; background: var(--azul); color: var(--blanco); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 36px; cursor: pointer; }
+#inicio img { width: 300px; }
+#inicio p { font-size: 40px; font-weight: 600; }
+#inicio small { font-size: 24px; opacity: .9; }
+
+/* ---------- Ayuda (tecla ?) ---------- */
+#ayuda { position: absolute; left: 40px; bottom: 40px; z-index: 9; background: rgba(20,24,32,.92); color: #fff; border-radius: 20px; padding: 28px 36px; font-size: 22px; line-height: 1.6; display: none; }
+#ayuda.ver { display: block; }
+#ayuda b { color: var(--amarillo); display: inline-block; min-width: 190px; }
+
+/* ---------- Escenas ---------- */
+.telefono { width: 440px; height: 780px; border-radius: 56px; background: #1f2329; padding: 14px; box-shadow: 0 30px 70px rgba(20,30,60,.25); }
+.telefono .sc { width: 100%; height: 100%; border-radius: 44px; background: #eef3fb; overflow: hidden; display: flex; flex-direction: column; }
+.telefono .hd { background: var(--azul); color: #fff; padding: 30px 24px 20px; display: flex; align-items: center; gap: 16px; }
+.telefono .hd img { width: 60px; height: 60px; border-radius: 50%; background: var(--amarillo); object-fit: cover; }
+.telefono .nm { font-size: 28px; font-weight: 700; line-height: 1.1; }
+.telefono .st { font-size: 22px; opacity: .95; }
+.telefono .ms { flex: 1; padding: 18px 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px; overflow: hidden; }
+.b { max-width: 86%; padding: 14px 18px; border-radius: 24px; font-size: 24px; line-height: 1.3; opacity: 0; transform: translateY(18px) scale(.96); transition: opacity .35s ease, transform .35s ease; flex: none; }
+.b.on2 { opacity: 1; transform: none; }
+.b.v { align-self: flex-end; background: var(--azul); color: #fff; border-bottom-right-radius: 6px; }
+.b.m { align-self: flex-start; background: #fff; color: var(--gris); border-bottom-left-radius: 6px; box-shadow: 0 2px 8px rgba(20,30,60,.06); }
+.au { display: flex; align-items: center; gap: 12px; }
+.pl { width: 0; height: 0; border-left: 18px solid #fff; border-top: 11px solid transparent; border-bottom: 11px solid transparent; }
+.wv { display: flex; align-items: center; gap: 3px; } .wv i { display: block; width: 4px; border-radius: 2px; background: #fff; }
+.op { border: 2px solid var(--azul); color: var(--azul); border-radius: 999px; padding: 6px 16px; margin-top: 10px; font-weight: 600; text-align: center; }
+.ty { display: flex; gap: 7px; padding: 6px 2px; } .ty i { display: block; width: 12px; height: 12px; border-radius: 50%; background: #9aa3b2; animation: punto 1s infinite; }
+.ty i:nth-child(2) { animation-delay: .15s; } .ty i:nth-child(3) { animation-delay: .3s; }
+@keyframes punto { 0%, 60%, 100% { transform: none; opacity: .5; } 30% { transform: translateY(-7px); opacity: 1; } }
+
+.chip { position: absolute; width: 200px; background: var(--blanco); border: 2px solid #dbe5f5; border-radius: 22px; padding: 14px 10px; font-size: 24px; font-weight: 600; line-height: 1.25; text-align: center; box-shadow: 0 6px 24px rgba(20,30,60,.08); }
+.eslabon { display: inline-flex; align-items: center; gap: 18px; }
+.pieza { font-size: 32px; font-weight: 600; background: var(--panel); border-radius: 999px; padding: 18px 34px; white-space: nowrap; }
+.mas { font-size: 44px; font-weight: 700; color: var(--azul); }
+</style>
+</head>
+<body>
+<div id="stage">
+
+<!-- ===================== 1. PORTADA ===================== -->
+<section class="slide blue" data-globo="¡Buenas!" data-globo-estilo="blanco"
+  data-notas="Migue ya está en pantalla, esperando. No leer la placa: arrancar con el problema. 'Durante décadas, para hablar con el Estado había que aprender el Estado.'">
+  <div class="cont centro" style="gap:28px">
+    <p class="ceja a izq" style="--d:.2s">Dirección de Inteligencia Artificial</p>
+    <h1 class="a izq" style="--d:.35s; font-size:240px; line-height:1; font-weight:800; letter-spacing:-6px">Migue</h1>
+    <h2 class="t2 a izq" style="--d:.5s; width:900px; font-weight:600">Ahora el que aprende es el Municipio</h2>
+  </div>
+  <img src="img/logo-horizontal-blanco.png" alt="Ciudad San Miguel de Tucumán" style="position:absolute; left:208px; top:900px; width:267px">
+</section>
+
+<!-- ===================== 2. EL PROBLEMA ===================== -->
+<section class="slide light" data-globo="Psst… ¿y si fuera al revés?" data-globo-demora="4200"
+  data-notas="Saber qué oficina corresponde, qué trámite existe, quién tiene competencia. El vecino no tiene por qué saberlo, y aun así el esfuerzo era suyo. Cuando aparece el globo de Migue: '¿Y si fuera al revés? ¿Si el que tuviera que aprender fuera el Municipio?' → Migue habla.">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> el problema</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont">
+    <h2 class="t2 a">Durante mucho tiempo, el vecino tuvo que <span class="azul">aprender</span> cómo funciona el Estado.</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:28px 40px; margin-top:12px">
+      <p class="globo-cita a pop" style="--d:.8s; transform:rotate(-1.2deg)">“¿Esto es de la Muni o de la Provincia?”</p>
+      <p class="globo-cita der a pop" style="--d:1.5s">“Me dijeron que eso no es en esta oficina.”</p>
+      <p class="globo-cita a pop" style="--d:2.2s">“Vine el martes y me faltaba un papel.”</p>
+      <p class="globo-cita der a pop" style="--d:2.9s">“¿A quién le tengo que reclamar esto?”</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 3. QUÉ ES ===================== -->
+<section class="slide light"
+  data-notas="Migue no es 'una IA' que compramos y enchufamos. La IA le permite entender; lo que sabe de la ciudad se lo dio la Municipalidad. Pie para Migue: 'Un modelo de IA puede procesar lenguaje natural, es decir, lenguaje tal como lo usamos las personas.'">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> qué es</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont">
+    <h2 class="t2 a">Un sistema municipal construido con inteligencia artificial.</h2>
+    <div style="display:flex; flex-wrap:wrap; gap:22px 18px; align-items:center; margin-top:20px">
+      <span class="eslabon a pop" style="--d:.6s"><span class="pieza">Información municipal</span><span class="mas">+</span></span>
+      <span class="eslabon a pop" style="--d:.9s"><span class="pieza">Sistemas de la Muni</span><span class="mas">+</span></span>
+      <span class="eslabon a pop" style="--d:1.2s"><span class="pieza">Reglas y permisos</span><span class="mas">+</span></span>
+      <span class="eslabon a pop" style="--d:1.5s"><span class="pieza">Personas que lo supervisan</span><span class="mas">+</span></span>
+      <span class="eslabon a pop" style="--d:1.9s"><span class="pieza" style="background:var(--azul); color:#fff">Inteligencia artificial</span></span>
+    </div>
+    <p class="t3 a" style="--d:2.5s; font-weight:500; color:var(--suave); margin-top:24px">La IA es una pieza. Muy importante, pero una pieza.</p>
+  </div>
+</section>
+
+<!-- ===================== 4. ENTENDER ===================== -->
+<section class="slide light" data-globo="Lo dijeron de tres formas. Yo escuché una sola cosa." data-globo-demora="3600"
+  data-notas="Ninguna de las tres frases dice 'alumbrado' y las tres piden lo mismo. Migue interpreta la intención, no busca palabras clave.">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> entender</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont">
+    <h2 class="t2 a">Tres maneras de decir lo mismo.</h2>
+    <div style="display:flex; align-items:center; gap:36px">
+      <div style="width:620px; display:flex; flex-direction:column; gap:20px">
+        <p class="globo-cita a izq" style="--d:.5s">“Está todo oscuro en mi cuadra.”</p>
+        <p class="globo-cita a izq" style="--d:1s">“No anda el foco de la esquina.”</p>
+        <p class="globo-cita a izq" style="--d:1.5s">“Me da miedo volver de noche por la calle.”</p>
+      </div>
+      <svg class="a izq" style="--d:2s; flex:none" width="100" height="60" viewBox="0 0 100 60"><path d="M0 30 H80 M60 8 L88 30 L60 52" fill="none" stroke="#2eb1ff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="tarjeta azulf a pop" style="--d:2.4s; width:400px">
+        <p class="ceja">Lo que necesita</p>
+        <p class="t3" style="font-weight:700">Alumbrado público</p>
+      </div>
+    </div>
+    <div class="trad a" style="--d:3s"><span class="tec">Procesamiento de lenguaje natural</span><span class="flecha">→</span><span class="cri">“Entender qué me está queriendo decir el vecino.”</span></div>
+  </div>
+</section>
+
+<!-- ===================== 5. EL CHAT ===================== -->
+<section class="slide light" data-escena="chat"
+  data-notas="El teléfono corre solo: un vecino manda un audio, Migue lo transcribe, 'escribe' y responde. Mucha gente no escribe: manda audios. El canal se adapta al vecino. Es una simulación ilustrativa.">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> en acción</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont" style="flex-direction:row; align-items:center; gap:70px">
+    <div style="width:640px; display:flex; flex-direction:column; gap:32px">
+      <h2 class="t2 a">Así le habla un vecino a Migue.</h2>
+      <p class="cuerpo suave a" style="--d:.4s">Por audio o por escrito, como le sale. Migue escucha, entiende y responde.</p>
+      <p class="chico suave a" style="--d:.8s">Simulación ilustrativa</p>
+    </div>
+    <div class="telefono a pop" style="--d:.3s">
+      <div class="sc">
+        <div class="hd"><img src="img/migue-cara.png" alt=""><div><div class="nm">Migue</div><div class="st">en línea</div></div></div>
+        <div class="ms"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 6. ANTES / AHORA ===================== -->
+<section class="slide light"
+  data-notas="Los sistemas de antes había que programarlos caso por caso. Un modelo de lenguaje aprendió, de enormes cantidades de texto, cómo se pregunta y cómo se pide. Pie para Migue: 'Si la pregunta no estaba prevista, no había respuesta.'">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> entender</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont">
+    <h2 class="t2 a">Antes, alguien tenía que escribir cada respuesta.</h2>
+    <div style="display:flex; gap:32px">
+      <div class="tarjeta a izq" style="--d:.5s; flex:1">
+        <h3 class="t3">Sistemas tradicionales</h3>
+        <p class="cuerpo suave">Un árbol de opciones: “marque 1, marque 2”. Si la pregunta no estaba prevista, no había respuesta.</p>
+      </div>
+      <div class="tarjeta azulf a der" style="--d:1s; flex:1">
+        <h3 class="t3">Migue</h3>
+        <p class="cuerpo">Aprendió cómo habla la gente. Comprende lo que se le pide, lo diga como lo diga.</p>
+      </div>
+    </div>
+    <div class="trad a" style="--d:1.6s"><span class="tec">Modelo de lenguaje</span><span class="flecha">→</span><span class="cri">“Aprendí cómo habla la gente, no una lista de respuestas.”</span></div>
+  </div>
+</section>
+
+<!-- ===================== 7. HERRAMIENTAS ===================== -->
+<section class="slide light" data-escena="hub"
+  data-notas="Un sistema que entiende pero no puede hacer nada es un conversador simpático. Migue consulta fuentes municipales reales (también historia de la ciudad y la ayuda de Ciudadano Digital). Turnos y reclamos: solo consulta, y solo si el vecino se identifica. Pie para Migue: 'Migue no responde de memoria: va a buscar el dato a donde corresponde.'">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> usar información</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont" style="width:470px; gap:32px">
+    <h2 class="t2 a">Entender es solo el comienzo.</h2>
+    <p class="cuerpo suave a" style="--d:.3s">El valor aparece cuando Migue usa la información y los sistemas de la Municipalidad.</p>
+    <p class="cuerpo azul a" style="--d:.6s; font-weight:600">WhatsApp · Web · Telegram<br>Un solo sistema.</p>
+  </div>
+  <canvas class="hub" width="1480" height="1520" style="position:absolute; left:700px; top:180px; width:740px; height:760px"></canvas>
+  <img class="a pop" src="img/migue-cara.png" alt="" style="--d:.3s; position:absolute; left:970px; top:460px; width:200px; height:200px; border-radius:50%; background:var(--amarillo); border:6px solid var(--azul); object-fit:cover">
+  <div class="chips"></div>
+</section>
+
+<!-- ===================== 8. HACIA ADENTRO ===================== -->
+<section class="slide blue" data-escena="ecg"
+  data-notas="Hasta acá, lo que ve el vecino. Ahora, lo que ve la Municipalidad. El tablero de Migue late con cada consulta: clasifica, mide qué se resolvió y detecta el clima de las conversaciones. Lo que Migue no pudo responder también es un dato. Pie para Migue: 'Cien reclamos parecidos no son cien conversaciones independientes.'">
+  <p class="rotulo"><b>Migue</b> hacia adentro</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
+  <div class="cont">
+    <h2 class="t2 a">Cada conversación también es información para gestionar mejor.</h2>
+    <div style="display:flex; gap:32px">
+      <p class="t3 a" style="--d:.5s; flex:1; border-top:6px solid var(--amarillo); padding-top:24px; font-weight:600">Qué se pregunta</p>
+      <p class="t3 a" style="--d:.8s; flex:1; border-top:6px solid var(--amarillo); padding-top:24px; font-weight:600">Qué se pudo resolver</p>
+      <p class="t3 a" style="--d:1.1s; flex:1; border-top:6px solid var(--amarillo); padding-top:24px; font-weight:600">Qué información falta</p>
+    </div>
+    <p class="ceja amarillo a" style="--d:1.5s; position:absolute; left:0; top:520px">Así late el tablero de Migue</p>
+  </div>
+  <canvas class="ecg" width="2380" height="400" style="position:absolute; left:208px; top:752px; width:1190px; height:200px"></canvas>
+</section>
+
+<!-- ===================== 9. CIEN RECLAMOS ===================== -->
+<section class="slide light" data-escena="mapa" data-globo="Cuando se juntan, ya no es casualidad." data-globo-demora="9000"
+  data-notas="El mapa se llena solo: 1 reclamo, 10, y después 100 que se amontonan en una zona. Una conversación es una respuesta; cien parecidas en el mismo lugar son una señal. OJO: es la dirección en la que avanzamos, no una función terminada. Pie para Migue, girando hacia él: 'Entonces, Migue… ¿vos vas a decidir por la Municipalidad?'">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> hacia adentro</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont" style="gap:14px">
+    <p class="ceja azul a">Hacia dónde vamos</p>
+    <h2 class="t2 a" style="--d:.15s">De responder reclamos a comprender la ciudad.</h2>
+  </div>
+  <canvas class="mapa" width="2380" height="1060" style="position:absolute; left:208px; top:420px; width:1190px; height:530px; border-radius:32px"></canvas>
+</section>
+
+<!-- ===================== 10. LÍMITES ===================== -->
+<section class="slide light"
+  data-notas="Migue puede comprender, organizar, buscar, usar herramientas y automatizar tareas definidas de antemano. Las reglas, los permisos y las decisiones siguen siendo de las personas y de las autoridades municipales. Y esas reglas no son una declaración: están en el diseño.">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> los límites</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont">
+    <h2 class="t2 a">Migue ayuda. Las personas deciden.</h2>
+    <div style="display:flex; gap:32px">
+      <div class="tarjeta a izq" style="--d:.5s; flex:1">
+        <div style="display:flex; align-items:center; gap:18px"><img src="img/migue-cara.png" alt="" style="width:76px; height:76px; border-radius:50%; background:var(--amarillo); object-fit:cover"><h3 class="t3">Lo que hace Migue</h3></div>
+        <ul class="cuerpo" style="padding-left:34px; line-height:1.6"><li>Comprender consultas</li><li>Buscar y ordenar información</li><li>Usar herramientas definidas</li><li>Sugerir y orientar</li><li>Automatizar tareas acordadas</li></ul>
+      </div>
+      <div class="tarjeta grisf a der" style="--d:1s; flex:1">
+        <h3 class="t3">Lo que sigue siendo de las personas</h3>
+        <ul class="cuerpo" style="padding-left:34px; line-height:1.6"><li>Decidir</li><li>Autorizar</li><li>Definir las reglas</li><li>Responder por las decisiones</li><li>Controlar al sistema</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 11. NO ES MAGIA ===================== -->
+<section class="slide dark" data-globo="¿O sea que no soy magia?" data-globo-estilo="blanco" data-globo-demora="600"
+  data-notas="Migue pregunta; la respuesta es tuya, sonriendo: 'No, Migue. Sos trabajo.' Detrás de cada respuesta hay diseño, información oficial, integraciones, reglas, seguridad y decisiones humanas. Si la fuente de cortes no responde, Migue no afirma que la calle está libre; puede consultar turnos pero no sacarlos; los datos personales salen de la sesión del vecino, nunca de lo que escribe en el chat.">
+  <p class="rotulo"><b>Migue</b> lo que no se ve</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
+  <div class="cont centro" style="gap:72px">
+    <h1 class="t1 a fade" style="--d:2s">No es magia.<br><span class="amarillo">Es trabajo.</span></h1>
+    <div style="display:flex; gap:32px">
+      <p class="cuerpo a" style="--d:2.8s; flex:1; border-top:6px solid var(--celeste); padding-top:24px">Si no tiene el dato, dice que no sabe. No inventa.</p>
+      <p class="cuerpo a" style="--d:3.1s; flex:1; border-top:6px solid var(--celeste); padding-top:24px">Consulta tus turnos. No los saca ni los anula.</p>
+      <p class="cuerpo a" style="--d:3.4s; flex:1; border-top:6px solid var(--celeste); padding-top:24px">Ve lo tuyo solo si entrás con Ciudadano Digital.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 12. CINCO ETAPAS ===================== -->
+<section class="slide light"
+  data-notas="Las etapas anteriores cambiaron sobre todo cómo trabajaba el Municipio por dentro, o por qué medio le llegaba al vecino. Esta es distinta: la IA interviene en cómo el ciudadano se comunica con su Municipalidad y en la capacidad del Municipio de interpretar lo que pasa y actuar.">
+  <div class="marco"></div><p class="rotulo"><b>Migue</b> una etapa distinta</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
+  <div class="cont" style="gap:40px">
+    <h2 class="t2 a">La digitalización de la Municipalidad, en cinco etapas.</h2>
+    <div style="position:relative; display:flex; flex-direction:column; gap:26px; padding-left:8px">
+      <div class="a fade" style="--d:.3s; position:absolute; left:39px; top:30px; bottom:40px; width:4px; background:var(--linea)"></div>
+      <div class="etapa a izq" style="--d:.5s"><i></i><p class="t3">Informatización</p><p class="cuerpo suave">El Municipio ordena sus datos.</p></div>
+      <div class="etapa a izq" style="--d:.8s"><i></i><p class="t3">Trámites digitales</p><p class="cuerpo suave">El trámite deja el papel.</p></div>
+      <div class="etapa a izq" style="--d:1.1s"><i></i><p class="t3">Canales digitales</p><p class="cuerpo suave">El Municipio llega a la pantalla del vecino.</p></div>
+      <div class="etapa a izq" style="--d:1.4s"><i></i><p class="t3">Automatización</p><p class="cuerpo suave">Los procesos corren solos.</p></div>
+      <div class="etapa ultima a pop" style="--d:1.9s"><img src="img/migue-cara.png" alt=""><p class="t3 azul">Migue</p><p class="cuerpo"><b>La IA entra en la relación con el vecino.</b></p></div>
+    </div>
+  </div>
+</section>
+<style>
+.etapa { display: grid; grid-template-columns: 64px 420px 1fr; align-items: center; gap: 28px; }
+.etapa i { width: 32px; height: 32px; border-radius: 50%; background: var(--azul); justify-self: center; position: relative; }
+.etapa .t3 { font-size: 40px; font-weight: 700; }
+.etapa img { width: 64px; height: 64px; border-radius: 50%; background: var(--amarillo); border: 4px solid var(--azul); object-fit: cover; position: relative; }
+</style>
+
+<!-- ===================== 13. CIERRE ===================== -->
+<section class="slide blue"
+  data-notas="Decirlo despacio. No se trata solamente de incorporar una nueva tecnología: se trata de empezar a construir una Municipalidad que entienda mejor. Al terminar, silencio de dos segundos y Migue habla, mirando al público.">
+  <div class="cont centro" style="gap:56px">
+    <h2 class="t2 a fade" style="--d:.2s; line-height:1.2">Por primera vez, la inteligencia artificial entra de manera directa en la relación entre San Miguel de Tucumán y sus vecinos.</h2>
+    <p class="t3 a fade" style="--d:1.4s; font-weight:400; line-height:1.35">Una Municipalidad que entiende mejor lo que necesita el vecino, y comprende mejor lo que pasa en la ciudad.</p>
+  </div>
+  <img src="img/logo-horizontal-blanco.png" alt="Ciudad San Miguel de Tucumán" style="position:absolute; left:208px; top:900px; width:218px">
+</section>
+
+<!-- ===================== 14. FINAL ===================== -->
+<section class="slide blue" data-globo="¿En qué te puedo ayudar?" data-globo-estilo="blanco" data-globo-demora="1200"
+  data-notas="Queda proyectada mientras se cierra el acto. Migue sigue en pantalla, esperando.">
+  <div class="cont centro" style="gap:40px">
+    <img class="a pop" src="img/logo-vertical-blanco.png" alt="Ciudad San Miguel de Tucumán" style="width:320px">
+    <h2 class="t2 a" style="--d:.4s">Escribile a Migue</h2>
+    <p class="cuerpo a" style="--d:.7s; font-weight:500">WhatsApp · ciudaddigital.smt.gob.ar · Telegram</p>
+  </div>
+</section>
+
+<!-- ===================== MIGUE ===================== -->
+<div id="globo"></div>
+<div id="migue">
+  <div id="disco"></div>
+  <div id="piso"></div>
+  <canvas id="lienzo"></canvas>
+  <div id="habla"><img src="img/migue-cara.png" alt=""><span>Migue</span><span class="barras"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
+</div>
+
+<div id="ayuda">
+  <b>→ · Espacio · AvPág</b> placa siguiente<br>
+  <b>← · RePág</b> placa anterior<br>
+  <b>Enter · M · B · .</b> Migue habla (próximo video)<br>
+  <b>1 … 8</b> Migue dice ese video<br>
+  <b>S</b> Migue se calla · <b>R</b> repite el último<br>
+  <b>0</b> vuelve la lista de videos al principio<br>
+  <b>H</b> oculta/muestra a Migue · <b>F</b> pantalla completa<br>
+  <b>?</b> esta ayuda
+</div>
+
+<div id="inicio">
+  <img src="img/logo-vertical-blanco.png" alt="">
+  <p>Tocá o apretá una tecla para empezar</p>
+  <small>Activa el sonido de Migue y la pantalla completa</small>
+</div>
+</div>
+
+<script>
+// =====================================================================
+// CONFIGURACIÓN
+// =====================================================================
+// Videos de Migue hablando, en el orden en que los va diciendo. Cada vez que
+// apretás "Migue" suena el próximo de la lista. Cambiá "texto" por lo que dice
+// cada uno: es lo que aparece en el control remoto.
+const VIDEOS = [
+  { archivo: 'media/migue1.mp4', texto: 'Migue 1' },
+  { archivo: 'media/migue2.mp4', texto: 'Migue 2' },
+  { archivo: 'media/migue3.mp4', texto: 'Migue 3' },
+  { archivo: 'media/migue4.mp4', texto: 'Migue 4' },
+  { archivo: 'media/migue5.mp4', texto: 'Migue 5' },
+  { archivo: 'media/migue6.mp4', texto: 'Migue 6' },
+  { archivo: 'media/migue7.mp4', texto: 'Migue 7' },
+  { archivo: 'media/migue9.mp4', texto: 'Migue 9' },
+];
+// Animaciones de espera (sin sonido). Se alternan mientras Migue escucha.
+const LOOPS = ['media/migueloop1.mp4', 'media/migueloop2.mp4', 'media/migueloop3.mp4'];
+
+// Altura de Migue en pantalla (px de un escenario de 1920×1080). Es la misma en
+// todos los videos: cada uno se escala según la altura real de la figura.
+const ALTO_MIGUE = 560;
+// Dónde quedan los pies y el centro, dentro del lienzo de Migue (440×640).
+const PIES_Y = 596, CENTRO_X = 220;
+// Medidas de la figura en cada tipo de video (medidas sobre los archivos):
+// los de habla son 896×1024 y los loops 720×1280 con franjas negras.
+const GEO = {
+  habla: { figura: 908, pies: 956, centro: 448, recorte: [0, 0, 896, 1024] },
+  loop:  { figura: 698, pies: 982, centro: 360, recorte: [0, 252, 720, 1026] },
+};
+// Recorte del verde. dom = cuánto domina el verde sobre rojo y azul (0 a 1).
+// El fondo da ~0.8; los anteojos de Migue ~0.2, por eso el corte empieza en 0.24.
+const CROMA = { desde: 0.24, hasta: 0.42 };
+
+// =====================================================================
+// ESCENARIO
+// =====================================================================
+const stage = document.getElementById('stage');
+function ajustar() {
+  const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+  stage.style.transformOrigin = '50% 50%';
+  stage.style.transform = `translate(-50%, -50%) scale(${s})`;
+  migue.ajustarResolucion(s);
+}
+
+// =====================================================================
+// PLACAS
+// =====================================================================
+const placas = [...document.querySelectorAll('.slide')];
+let actual = 0;
+const globo = document.getElementById('globo');
+let globoTimer = null;
+
+function irA(n) {
+  n = Math.max(0, Math.min(placas.length - 1, n));
+  const antes = placas[actual];
+  if (antes && antes !== placas[n]) { antes.classList.remove('on'); escenas.parar(antes); }
+  actual = n;
+  const p = placas[n];
+  // Reiniciar las animaciones de entrada.
+  p.classList.remove('on'); void p.offsetWidth; p.classList.add('on');
+  escenas.arrancar(p);
+  // Disco detrás de Migue según el fondo de la placa.
+  const disco = document.getElementById('disco');
+  disco.style.background = p.classList.contains('light') ? '#e8f0ff' : p.classList.contains('dark') ? '#474747' : '#f4dc00';
+  mostrarGlobo(p);
+  informar();
+}
+function mostrarGlobo(p) {
+  clearTimeout(globoTimer);
+  globo.classList.remove('ver');
+  const txt = p.dataset.globo;
+  if (!txt) return;
+  globoTimer = setTimeout(() => {
+    if (migue.hablando) return;
+    globo.textContent = txt;
+    globo.classList.toggle('blanco', p.dataset.globoEstilo === 'blanco');
+    globo.classList.add('ver');
+  }, parseInt(p.dataset.globoDemora || '900', 10));
+}
+
+// =====================================================================
+// MIGUE: videos con el verde recortado en tiempo real (WebGL)
+// =====================================================================
+const migue = (() => {
+  const cont = document.getElementById('migue');
+  const lienzo = document.getElementById('lienzo');
+  const barras = [...document.querySelectorAll('#habla .barras i')];
+  const disco = document.getElementById('disco');
+  const gl = lienzo.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: true });
+
+  const VS = `attribute vec2 p; attribute vec2 uv; varying vec2 v; void main(){ v = uv; gl_Position = vec4(p, 0.0, 1.0); }`;
+  const FS = `precision mediump float; varying vec2 v; uniform sampler2D t; uniform float op; uniform vec2 k;
+    void main(){
+      vec4 c = texture2D(t, v);
+      float dom = c.g - max(c.r, c.b);
+      float a = 1.0 - smoothstep(k.x, k.y, dom);
+      // Quitar el reflejo verde de los bordes, sin tocar los anteojos (verde oscuro).
+      float spill = smoothstep(0.06, 0.26, dom) * smoothstep(0.35, 0.6, c.g);
+      c.g = mix(c.g, max(c.r, c.b), spill);
+      a *= op;
+      gl_FragColor = vec4(c.rgb * a, a);
+    }`;
+  function sh(tipo, src) { const s = gl.createShader(tipo); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  const aP = gl.getAttribLocation(prog, 'p'), aUV = gl.getAttribLocation(prog, 'uv');
+  const uOp = gl.getUniformLocation(prog, 'op'), uK = gl.getUniformLocation(prog, 'k');
+  gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+  function textura() {
+    const t = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, t);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    return t;
+  }
+  function crearVideo(src, conSonido) {
+    const v = document.createElement('video');
+    v.src = src; v.preload = 'auto'; v.playsInline = true; v.muted = !conSonido; v.crossOrigin = 'anonymous';
+    return v;
+  }
+
+  // Loops de espera.
+  const loops = LOOPS.map(s => ({ v: crearVideo(s, false), t: textura(), geo: GEO.loop, op: 1 }));
+  let loopActual = 0;
+  loops.forEach((l, i) => l.v.addEventListener('ended', () => {
+    // El primero es la espera "de base"; los otros aparecen de vez en cuando.
+    const sig = Math.random() < 0.55 ? 0 : 1 + Math.floor(Math.random() * (loops.length - 1));
+    loopActual = sig; loops[sig].v.currentTime = 0; loops[sig].v.play().catch(() => { });
+  }));
+
+  // Videos de habla.
+  const clips = VIDEOS.map(c => ({ v: crearVideo(c.archivo, true), t: textura(), geo: GEO.habla, op: 0 }));
+  let clipActual = -1, proximo = 0, idleOp = 1;
+  const api = { hablando: false, proximo: () => proximo, actual: () => clipActual };
+
+  // Nivel de voz (para las barras y el disco).
+  let ctx = null, analizador = null, datos = null;
+  function prepararAudio() {
+    if (ctx) return;
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      analizador = ctx.createAnalyser(); analizador.fftSize = 256; datos = new Uint8Array(analizador.frequencyBinCount);
+      clips.forEach(c => { const s = ctx.createMediaElementSource(c.v); s.connect(analizador); });
+      analizador.connect(ctx.destination);
+    } catch (e) { ctx = null; }
+  }
+
+  api.desbloquear = async () => {
+    prepararAudio();
+    if (ctx && ctx.state === 'suspended') await ctx.resume();
+    // Tocar y pausar cada video una vez deja habilitado el sonido para después
+    // (lo necesita el control remoto, que no cuenta como "gesto" del usuario).
+    await Promise.all(clips.map(async c => { try { c.v.muted = true; await c.v.play(); c.v.pause(); c.v.currentTime = 0; c.v.muted = false; } catch (e) { } }));
+    loops[0].v.play().catch(() => { });
+  };
+
+  api.decir = async (i) => {
+    if (i == null) i = proximo;
+    if (i < 0 || i >= clips.length) return;
+    api.callar(true);
+    clipActual = i; proximo = Math.min(i + 1, clips.length - 1 + 1);
+    const c = clips[i];
+    c.v.currentTime = 0; c.v.muted = false;
+    globo.classList.remove('ver');
+    try { if (ctx && ctx.state === 'suspended') await ctx.resume(); await c.v.play(); } catch (e) { console.warn('No se pudo reproducir', e); return; }
+    api.hablando = true; cont.classList.add('hablando');
+    c.v.onended = () => { if (clipActual === i) terminar(); };
+    informar();
+  };
+  function terminar() { api.hablando = false; cont.classList.remove('hablando'); informar(); }
+  api.callar = (silencioso) => {
+    clips.forEach(c => { if (!c.v.paused) c.v.pause(); });
+    if (api.hablando) terminar();
+    if (!silencioso) informar();
+  };
+  api.repetir = () => { if (clipActual >= 0) api.decir(clipActual); };
+  api.reiniciar = () => { proximo = 0; informar(); };
+  api.alternar = () => { cont.classList.toggle('oculto'); if (cont.classList.contains('oculto')) api.callar(); informar(); };
+
+  // Resolución del lienzo acorde a la escala real de la pantalla.
+  let esc = 1;
+  api.ajustarResolucion = (s) => {
+    esc = s; const dpr = window.devicePixelRatio || 1;
+    lienzo.width = Math.round(440 * s * dpr); lienzo.height = Math.round(640 * s * dpr);
+    gl.viewport(0, 0, lienzo.width, lienzo.height);
+  };
+
+  function dibujar(item) {
+    const v = item.v; if (v.readyState < 2 || item.op <= 0.001) return;
+    const g = item.geo, esc2 = ALTO_MIGUE / g.figura;
+    const [cx0, cy0, cx1, cy1] = g.recorte;
+    // Rectángulo destino (en px del lienzo de 440×640).
+    const x0 = CENTRO_X + (cx0 - g.centro) * esc2, x1 = CENTRO_X + (cx1 - g.centro) * esc2;
+    const y0 = PIES_Y + (cy0 - g.pies) * esc2, y1 = PIES_Y + (cy1 - g.pies) * esc2;
+    const X = x => x / 440 * 2 - 1, Y = y => 1 - y / 640 * 2;
+    const W = v.videoWidth, H = v.videoHeight;
+    const u0 = cx0 / W, u1 = cx1 / W, v0 = cy0 / H, v1 = cy1 / H;
+    const d = new Float32Array([
+      X(x0), Y(y0), u0, v0, X(x1), Y(y0), u1, v0, X(x0), Y(y1), u0, v1,
+      X(x0), Y(y1), u0, v1, X(x1), Y(y0), u1, v0, X(x1), Y(y1), u1, v1]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf); gl.bufferData(gl.ARRAY_BUFFER, d, gl.DYNAMIC_DRAW);
+    gl.enableVertexAttribArray(aP); gl.vertexAttribPointer(aP, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(aUV); gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, 16, 8);
+    gl.bindTexture(gl.TEXTURE_2D, item.t);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, v);
+    gl.uniform1f(uOp, item.op); gl.uniform2f(uK, CROMA.desde, CROMA.hasta);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+
+  let nivel = 0;
+  function cuadro() {
+    // Fundido suave entre la espera y el habla.
+    const objetivoHabla = api.hablando ? 1 : 0;
+    idleOp += ((1 - objetivoHabla) - idleOp) * 0.25;
+    clips.forEach((c, i) => { const obj = (i === clipActual && api.hablando) ? 1 : 0; c.op += (obj - c.op) * 0.25; });
+    gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT);
+    loops.forEach((l, i) => { l.op = i === loopActual ? idleOp : 0; dibujar(l); });
+    clips.forEach(dibujar);
+    // Voz → barras y disco.
+    let n = 0;
+    if (analizador && api.hablando) { analizador.getByteFrequencyData(datos); let s = 0; for (let i = 2; i < 40; i++) s += datos[i]; n = Math.min(1, s / (38 * 170)); }
+    nivel += (n - nivel) * 0.3;
+    barras.forEach((b, i) => { b.style.height = (6 + nivel * 20 * (0.6 + 0.4 * Math.abs(Math.sin(Date.now() / 120 + i)))) + 'px'; });
+    disco.style.transform = `scale(${1 + nivel * 0.05})`;
+    requestAnimationFrame(cuadro);
+  }
+  requestAnimationFrame(cuadro);
+  api.total = clips.length;
+  api.debug = () => ({ ctx: ctx && ctx.state, activo: navigator.userActivation && navigator.userActivation.hasBeenActive, clips: clips.map(c => [c.v.paused, +c.v.currentTime.toFixed(1), c.v.readyState, c.v.muted]) });
+  return api;
+})();
+
+// =====================================================================
+// ESCENAS VIVAS
+// =====================================================================
+const escenas = (() => {
+  const activas = new Map();
+  const reg = {};
+
+  // --- Chat simulado
+  reg.chat = (p) => {
+    const M = p.querySelector('.ms'), S = p.querySelector('.st');
+    let timers = [], T = null, vivo = true;
+    M.innerHTML = '';
+    function add(q, h) { quitar(); const d = document.createElement('div'); d.className = 'b ' + q; d.innerHTML = h; M.appendChild(d); requestAnimationFrame(() => requestAnimationFrame(() => d.classList.add('on2'))); while (M.children.length > 7) M.removeChild(M.firstChild); }
+    function quitar() { if (T) { T.remove(); T = null; } S.textContent = 'en línea'; }
+    function tipea() { add('m', '<div class="ty"><i></i><i></i><i></i></div>'); T = M.lastChild; S.textContent = 'escribiendo…'; }
+    function audio() { let s = ''; for (let i = 0; i < 22; i++) s += `<i style="height:${8 + Math.round(Math.abs(Math.sin(i * 1.7)) * 22)}px"></i>`; return `<div class="au"><span class="pl"></span><span class="wv">${s}</span><span>0:06</span></div>`; }
+    const P = [
+      [1200, () => add('v', audio())],
+      [1500, () => add('v', '<i>“Hola Migue, ¿qué necesito pa’ sacar el carnet de conducir?”</i>')],
+      [900, tipea],
+      [1900, () => add('m', '¡Buenas! Te cuento lo que necesitás para la licencia de conducir.')],
+      [800, tipea],
+      [1500, () => add('m', '¿Qué querés saber?<div class="op">Requisitos</div><div class="op">Cómo sacar el turno</div><div class="op">Dónde se hace</div>')],
+      [2600, () => add('v', '¡Gracias Migue, sos un genio!')],
+      [900, tipea],
+      [1500, () => add('m', '¡De nada! Acá ando para lo que necesités.')],
+      [5000, () => { M.innerHTML = ''; T = null; }],
+    ];
+    let k = 0;
+    (function go() { if (!vivo) return; const [ms, fn] = P[k]; timers.push(setTimeout(() => { if (!vivo) return; fn(); k = (k + 1) % P.length; go(); }, ms)); })();
+    return () => { vivo = false; timers.forEach(clearTimeout); M.innerHTML = ''; };
+  };
+
+  // --- Fuentes conectadas
+  const FUENTES = ['Guía de Trámites', 'Lugares y horarios', 'Agenda de eventos', 'Cortes de tránsito', 'Funcionarios y áreas', 'Noticias municipales', 'Turnos disponibles', 'Estado de reclamos'];
+  reg.hub = (p) => {
+    const cv = p.querySelector('canvas.hub'), x = cv.getContext('2d'); x.setTransform(2, 0, 0, 2, 0, 0);
+    const O = [370, 380], RX = 290, RY = 300;
+    const pts = FUENTES.map((_, i) => { const a = (-112.5 + i * 45) * Math.PI / 180; return [O[0] + RX * Math.cos(a), O[1] + RY * Math.sin(a)]; });
+    const chips = p.querySelector('.chips'); chips.innerHTML = '';
+    pts.forEach(([px, py], i) => {
+      const d = document.createElement('div'); d.className = 'chip a pop'; d.style.setProperty('--d', (0.6 + i * 0.18) + 's');
+      d.style.left = (700 + px - 100) + 'px'; d.style.top = (180 + py - 42) + 'px'; d.textContent = FUENTES[i]; chips.appendChild(d);
+    });
+    let Q = [], last = 0, t0 = performance.now(), raf, vivo = true;
+    function draw(now) {
+      if (!vivo) return;
+      if (now - last > 380) { Q.push({ i: Math.floor(Math.random() * pts.length), s: now, sale: Math.random() < .5 }); last = now; }
+      x.clearRect(0, 0, 740, 760); x.lineCap = 'round';
+      pts.forEach(p2 => { x.strokeStyle = '#dbe5f5'; x.lineWidth = 4; x.beginPath(); x.moveTo(O[0], O[1]); x.lineTo(p2[0], p2[1]); x.stroke(); });
+      const r = ((now - t0) % 2200) / 2200; x.strokeStyle = `rgba(46,177,255,${(1 - r) * .6})`; x.lineWidth = 6; x.beginPath(); x.arc(O[0], O[1], 110 + r * 90, 0, 7); x.stroke();
+      Q = Q.filter(q => { const f = (now - q.s) / 1300; if (f > 1) return false; const p2 = pts[q.i], g = q.sale ? f : 1 - f; x.fillStyle = q.sale ? '#0066ff' : '#f4dc00'; x.beginPath(); x.arc(O[0] + (p2[0] - O[0]) * g, O[1] + (p2[1] - O[1]) * g, 9, 0, 7); x.fill(); return true; });
+      raf = requestAnimationFrame(draw);
+    }
+    raf = requestAnimationFrame(draw);
+    return () => { vivo = false; cancelAnimationFrame(raf); };
+  };
+
+  // --- Pulso del tablero
+  reg.ecg = (p) => {
+    const cv = p.querySelector('canvas.ecg'), x = cv.getContext('2d'); x.setTransform(2, 0, 0, 2, 0, 0);
+    const W = 1190, H = 200, N = 300, Y = new Array(N).fill(0), S = [0, 0, -5, -8, -5, 0, 0, 7, -50, 66, -22, 0, 0, 0, -8, -13, -16, -13, -8, 0];
+    let t = 0, nx = 30, k = 99, a = 1, raf, vivo = true;
+    function paso() { t++; if (t >= nx) { k = 0; nx = t + 40 + Math.floor(Math.random() * 36); a = Math.random() < .3 ? 1.2 : 1; } Y.push((k < S.length ? S[k] * a : 0) + (Math.random() - .5) * 2); k++; Y.shift(); }
+    function draw() {
+      if (!vivo) return; paso(); paso(); x.clearRect(0, 0, W, H);
+      x.strokeStyle = 'rgba(255,255,255,.14)'; x.lineWidth = 1;
+      for (let g = 0; g < W; g += 40) { x.beginPath(); x.moveTo(g, 0); x.lineTo(g, H); x.stroke(); } for (let h = 0; h < H; h += 40) { x.beginPath(); x.moveTo(0, h); x.lineTo(W, h); x.stroke(); }
+      x.lineWidth = 5; x.strokeStyle = '#fff'; x.lineJoin = 'round'; x.shadowColor = 'rgba(255,255,255,.8)'; x.shadowBlur = 14; x.beginPath();
+      for (let i = 0; i < N; i++) { const px = i * (W - 24) / (N - 1), py = H / 2 + Y[i]; i ? x.lineTo(px, py) : x.moveTo(px, py); } x.stroke(); x.shadowBlur = 0;
+      x.fillStyle = '#f4dc00'; x.beginPath(); x.arc(W - 24, H / 2 + Y[N - 1], 11, 0, 7); x.fill();
+      raf = requestAnimationFrame(draw);
+    }
+    raf = requestAnimationFrame(draw);
+    return () => { vivo = false; cancelAnimationFrame(raf); };
+  };
+
+  // --- Mapa de reclamos (ilustrativo)
+  reg.mapa = (p) => {
+    const cv = p.querySelector('canvas.mapa'), x = cv.getContext('2d'); x.setTransform(2, 0, 0, 2, 0, 0);
+    const W = 1190, H = 530; let s = 7;
+    const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647; };
+    const g = () => Math.sqrt(-2 * Math.log(r() + 1e-9)) * Math.cos(6.2832 * r());
+    const D = [[400, 300]]; for (let i = 1; i < 10; i++) D.push([60 + r() * (W - 120), 150 + r() * (H - 200)]);
+    for (let i = 10; i < 100; i++) D.push(i < 86 ? [840 + g() * 46, 280 + g() * 40] : [60 + r() * (W - 120), 150 + r() * (H - 200)]);
+    const cuando = i => i === 0 ? 600 : i < 10 ? 2600 + (i - 1) * 140 : 5000 + (i - 10) * 32;
+    let T0 = performance.now(), raf, vivo = true;
+    function rr(a, b, w, h, q) { x.beginPath(); x.moveTo(a + q, b); x.arcTo(a + w, b, a + w, b + h, q); x.arcTo(a + w, b + h, a, b + h, q); x.arcTo(a, b + h, a, b, q); x.arcTo(a, b, a + w, b, q); x.closePath(); }
+    function draw(now) {
+      if (!vivo) return;
+      let t = now - T0; if (t > 13000) { T0 = now; t = 0; } const fade = t > 12000 ? 1 - (t - 12000) / 1000 : 1;
+      x.clearRect(0, 0, W, H); x.fillStyle = '#f2f6ff'; x.fillRect(0, 0, W, H);
+      x.strokeStyle = '#dbe5f5'; x.lineWidth = 6; for (let gx = 70; gx < W; gx += 110) { x.beginPath(); x.moveTo(gx, 0); x.lineTo(gx, H); x.stroke(); } for (let gy = 60; gy < H; gy += 100) { x.beginPath(); x.moveTo(0, gy); x.lineTo(W, gy); x.stroke(); }
+      x.lineWidth = 14; x.beginPath(); x.moveTo(0, H); x.lineTo(W, 40); x.stroke();
+      x.globalAlpha = fade; let n = 0;
+      if (t > 7900) { const h = Math.min(1, (t - 7900) / 700), pu = 1 + Math.sin(t / 260) * .05; x.fillStyle = 'rgba(244,220,0,.45)'; x.beginPath(); x.arc(840, 280, 150 * h * pu, 0, 7); x.fill(); }
+      for (let i = 0; i < 100; i++) { const e = t - cuando(i); if (e < 0) continue; n++; const k = Math.min(1, e / 260), sc = k < 1 ? 1.5 * k - .5 * k * k * k : 1; x.fillStyle = '#0066ff'; x.beginPath(); x.arc(D[i][0], D[i][1], (i === 0 ? 13 : 9) * sc, 0, 7); x.fill(); }
+      rr(28, 28, n >= 100 ? 500 : 340, n >= 100 ? 150 : 112, 24); x.fillStyle = 'rgba(255,255,255,.95)'; x.fill();
+      x.fillStyle = '#333333'; x.textBaseline = 'top'; x.font = '800 64px Poppins'; x.fillText(String(n), 52, 40);
+      const w = x.measureText(String(n)).width; x.font = '600 30px Poppins'; x.fillText(n === 1 ? 'reclamo' : 'reclamos', 64 + w, 70);
+      if (n >= 100) { x.fillStyle = '#0066ff'; x.font = '700 30px Poppins'; x.fillText('en la misma zona: una señal', 52, 124); }
+      x.globalAlpha = 1; raf = requestAnimationFrame(draw);
+    }
+    raf = requestAnimationFrame(draw);
+    return () => { vivo = false; cancelAnimationFrame(raf); };
+  };
+
+  return {
+    arrancar(p) { const n = p.dataset.escena; if (n && reg[n] && !activas.has(p)) activas.set(p, reg[n](p)); },
+    parar(p) { const f = activas.get(p); if (f) { f(); activas.delete(p); } },
+  };
+})();
+
+// =====================================================================
+// CONTROLES: teclado, clicker y control remoto
+// =====================================================================
+function ejecutar(c) {
+  switch (c.cmd) {
+    case 'siguiente': irA(actual + 1); break;
+    case 'anterior': irA(actual - 1); break;
+    case 'ir': irA(c.n | 0); break;
+    case 'migue': migue.decir(c.n != null ? c.n : undefined); break;
+    case 'callar': migue.callar(); break;
+    case 'repetir': migue.repetir(); break;
+    case 'reiniciar': migue.reiniciar(); break;
+    case 'ocultar': migue.alternar(); break;
+  }
+}
+window.migue = { ejecutar, debug: () => migue.debug() }; // para probar desde la consola
+
+let empezado = false;
+async function empezar() {
+  if (empezado) return; empezado = true;
+  document.getElementById('inicio').style.display = 'none';
+  try { if (!document.fullscreenElement) await document.documentElement.requestFullscreen(); } catch (e) { }
+  await migue.desbloquear();
+  irA(0);
+}
+document.getElementById('inicio').addEventListener('click', empezar);
+
+addEventListener('keydown', (e) => {
+  if (!empezado) { empezar(); return; }
+  const k = e.key;
+  if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); irA(actual + 1); }
+  else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); irA(actual - 1); }
+  else if (['Enter', 'm', 'M', 'b', 'B', '.'].includes(k)) { e.preventDefault(); migue.decir(); }
+  else if (k >= '1' && k <= '9') migue.decir(parseInt(k, 10) - 1);
+  else if (k === '0') migue.reiniciar();
+  else if (k === 's' || k === 'S') migue.callar();
+  else if (k === 'r' || k === 'R') migue.repetir();
+  else if (k === 'h' || k === 'H') migue.alternar();
+  else if (k === 'f' || k === 'F') { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen().catch(() => { }); }
+  else if (k === '?') document.getElementById('ayuda').classList.toggle('ver');
+});
+let mouseTimer; addEventListener('mousemove', () => { document.body.classList.add('cursor'); clearTimeout(mouseTimer); mouseTimer = setTimeout(() => document.body.classList.remove('cursor'), 2000); });
+
+// Control remoto (celular). Ver remoto.js: por Supabase si está publicada,
+// o por server.js si corre en la compu.
+const remoto = window.Remoto.iniciar({
+  rol: 'pantalla',
+  alRecibirComando: (c) => { if (empezado) ejecutar(c); },
+});
+remoto.pedirEstado = () => informar();
+setInterval(() => informar(), 3000); // latido: el control sabe que la pantalla sigue ahí
+function informar() {
+  const p = placas[actual];
+  const estado = {
+    placa: actual + 1, total: placas.length,
+    titulo: (p.querySelector('h1, h2') || {}).textContent || '',
+    notas: p.dataset.notas || '',
+    hablando: migue.hablando, proximo: migue.proximo(), actual: migue.actual(),
+    oculto: document.getElementById('migue').classList.contains('oculto'),
+    videos: VIDEOS.map(v => v.texto), empezado,
+  };
+  remoto.enviarEstado(estado);
+}
+
+// Abierta como archivo (doble clic en index.html) el navegador no deja recortar
+// el video: avisarlo en la pantalla de inicio en vez de mostrar un Migue vacío.
+if (location.protocol === 'file:') {
+  document.querySelector('#inicio small').textContent = 'Abierta como archivo, Migue no se puede mostrar. Abrila con INICIAR.bat o desde el link publicado.';
+}
+
+addEventListener('resize', ajustar);
+ajustar();
+placas[0].classList.add('on');
+informar();
+</script>
+</body>
+</html>
