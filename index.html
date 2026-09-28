@@ -366,7 +366,7 @@ h1, h2, h3 { font-weight: 700; }
 
 <!-- ===================== 17. FINAL ===================== -->
 <section class="slide blue" data-globo="¿En qué te puedo ayudar?" data-globo-estilo="blanco" data-globo-demora="1200"
-  data-notas="Queda proyectada mientras se cierra el acto. Migue sigue en pantalla, esperando.">
+  data-notas="Queda proyectada mientras se cierra el acto. MOMENTO FLORES: apretar Migue (video 9, Flores para la Intendenta, 16 s): Migue le regala un ramo a la Intendenta. Después sigue en pantalla, esperando.">
   <div class="cont centro" style="gap:40px">
     <img class="a pop" src="img/logo-vertical-blanco.png" alt="Ciudad San Miguel de Tucumán" style="width:320px">
     <h2 class="t2 a" style="--d:.4s">Hablale a Migue</h2>
@@ -460,7 +460,7 @@ h1, h2, h3 { font-weight: 700; }
   <b>→ · Espacio · AvPág</b> placa siguiente<br>
   <b>← · RePág</b> placa anterior<br>
   <b>Enter · M · B · .</b> Migue habla (próximo video)<br>
-  <b>1 … 8</b> Migue dice ese video<br>
+  <b>1 … 9</b> Migue dice ese video<br>
   <b>S</b> Migue se calla · <b>R</b> repite el último<br>
   <b>0</b> vuelve la lista de videos al principio<br>
   <b>H</b> oculta/muestra a Migue · <b>F</b> pantalla completa<br>
@@ -491,6 +491,8 @@ const VIDEOS = [
   { archivo: 'media/migue6.mp4', texto: 'Me enseñaron cómo trabajar' },
   { archivo: 'media/migue7.mp4', texto: 'Pero el vecino no piensa así' },
   { archivo: 'media/migue9.mp4', texto: 'Entonces, empecemos por ahí' },
+  // Fondo magenta (no verde): el verde se confundía con los tallos del ramo.
+  { archivo: 'media/migueflores1.mp4', texto: 'Flores para la Intendenta', geo: 'flores', croma: 'magenta' },
 ];
 // Animaciones de espera (sin sonido). Se alternan mientras Migue escucha.
 const LOOPS = ['media/migueloop1.mp4', 'media/migueloop2.mp4', 'media/migueloop3.mp4'];
@@ -505,10 +507,14 @@ const PIES_Y = 596, CENTRO_X = 220;
 const GEO = {
   habla: { figura: 908, pies: 956, centro: 448, recorte: [0, 0, 896, 1024] },
   loop:  { figura: 698, pies: 982, centro: 360, recorte: [0, 252, 720, 1026] },
+  flores: { figura: 894, pies: 942, centro: 448, recorte: [0, 0, 896, 1024] },
 };
 // Recorte del verde. dom = cuánto domina el verde sobre rojo y azul (0 a 1).
 // El fondo da ~0.8; los anteojos de Migue ~0.2, por eso el corte empieza en 0.24.
 const CROMA = { desde: 0.24, hasta: 0.42 };
+// Recorte del magenta (video de las flores): dom = cuánto le gana el rojo+azul
+// al verde. El fondo da ~0.3; Migue, la ropa y las flores quedan por debajo de 0.
+const CROMA_MAGENTA = { desde: 0.12, hasta: 0.24 };
 
 // =====================================================================
 // ESCENARIO
@@ -568,14 +574,22 @@ const migue = (() => {
   const gl = lienzo.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: true });
 
   const VS = `attribute vec2 p; attribute vec2 uv; varying vec2 v; void main(){ v = uv; gl_Position = vec4(p, 0.0, 1.0); }`;
-  const FS = `precision mediump float; varying vec2 v; uniform sampler2D t; uniform float op; uniform vec2 k;
+  const FS = `precision mediump float; varying vec2 v; uniform sampler2D t; uniform float op; uniform vec2 k; uniform float magenta;
     void main(){
       vec4 c = texture2D(t, v);
-      float dom = c.g - max(c.r, c.b);
+      float dom, spill;
+      if (magenta < 0.5) {
+        dom = c.g - max(c.r, c.b);
+        // Quitar el reflejo verde de los bordes, sin tocar los anteojos (verde oscuro).
+        spill = smoothstep(0.06, 0.26, dom) * smoothstep(0.35, 0.6, c.g);
+        c.g = mix(c.g, max(c.r, c.b), spill);
+      } else {
+        dom = min(c.r, c.b) - c.g;
+        spill = smoothstep(0.03, 0.16, dom);
+        c.r = mix(c.r, max(c.g, c.r - dom), spill);
+        c.b = mix(c.b, max(c.g, c.b - dom), spill);
+      }
       float a = 1.0 - smoothstep(k.x, k.y, dom);
-      // Quitar el reflejo verde de los bordes, sin tocar los anteojos (verde oscuro).
-      float spill = smoothstep(0.06, 0.26, dom) * smoothstep(0.35, 0.6, c.g);
-      c.g = mix(c.g, max(c.r, c.b), spill);
       a *= op;
       gl_FragColor = vec4(c.rgb * a, a);
     }`;
@@ -584,7 +598,7 @@ const migue = (() => {
   gl.attachShader(prog, sh(gl.VERTEX_SHADER, VS)); gl.attachShader(prog, sh(gl.FRAGMENT_SHADER, FS)); gl.linkProgram(prog); gl.useProgram(prog);
   const buf = gl.createBuffer();
   const aP = gl.getAttribLocation(prog, 'p'), aUV = gl.getAttribLocation(prog, 'uv');
-  const uOp = gl.getUniformLocation(prog, 'op'), uK = gl.getUniformLocation(prog, 'k');
+  const uOp = gl.getUniformLocation(prog, 'op'), uK = gl.getUniformLocation(prog, 'k'), uMag = gl.getUniformLocation(prog, 'magenta');
   gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
   function textura() {
@@ -609,7 +623,7 @@ const migue = (() => {
   }));
 
   // Videos de habla.
-  const clips = VIDEOS.map(c => ({ v: crearVideo(c.archivo, true), t: textura(), geo: GEO.habla, op: 0 }));
+  const clips = VIDEOS.map(c => ({ v: crearVideo(c.archivo, true), t: textura(), geo: GEO[c.geo || 'habla'], magenta: c.croma === 'magenta', op: 0 }));
   let clipActual = -1, proximo = 0, idleOp = 1;
   const api = { hablando: false, proximo: () => proximo, actual: () => clipActual };
 
@@ -683,7 +697,8 @@ const migue = (() => {
     gl.enableVertexAttribArray(aUV); gl.vertexAttribPointer(aUV, 2, gl.FLOAT, false, 16, 8);
     gl.bindTexture(gl.TEXTURE_2D, item.t);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, v);
-    gl.uniform1f(uOp, item.op); gl.uniform2f(uK, CROMA.desde, CROMA.hasta);
+    const k = item.magenta ? CROMA_MAGENTA : CROMA;
+    gl.uniform1f(uOp, item.op); gl.uniform2f(uK, k.desde, k.hasta); gl.uniform1f(uMag, item.magenta ? 1 : 0);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 

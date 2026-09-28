@@ -11,7 +11,7 @@ Presentación del lanzamiento de Migue, el asistente virtual de la Municipalidad
 |---|---|
 | Placa siguiente / anterior | → ← · AvPág RePág · Espacio |
 | Migue dice el próximo video | Enter · M · B · . |
-| Migue dice un video puntual | 1 … 8 |
+| Migue dice un video puntual | 1 … 9 |
 | Callar · repetir · volver al video 1 | S · R · 0 |
 | Ocultar a Migue · pantalla completa · ayuda | H · F · ? |
 | Abrir el panel de Migue en otra pestaña | D |
