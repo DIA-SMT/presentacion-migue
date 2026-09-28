@@ -32,5 +32,10 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/preguntar.js": {
+      "maxDuration": 60
+    }
+  }
 }

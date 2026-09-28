@@ -131,6 +131,7 @@ h1, h2, h3 { font-weight: 700; }
 .pieza { font-size: 32px; font-weight: 600; background: var(--panel); border-radius: 999px; padding: 18px 34px; white-space: nowrap; }
 .mas { font-size: 44px; font-weight: 700; color: var(--azul); }
 </style>
+<link rel="stylesheet" href="efectos.css">
 </head>
 <body>
 <div id="stage">
@@ -147,7 +148,7 @@ h1, h2, h3 { font-weight: 700; }
 </section>
 
 <!-- ===================== 2. EL SISTEMA TRADICIONAL → Migue 1 ===================== -->
-<section class="slide light"
+<section data-transicion="petalo" class="slide light"
   data-notas="MARCO: 'Migue no funciona como un sistema tradicional, donde alguien tiene que prever de antemano cada pregunta y programar cada respuesta.' (Dejar que el público lea el menú y el 'Opción no válida'.) → MIGUE 1: 'O sea… no tengo un botón escondido que dice respuesta para bache.'">
   <div class="marco"></div><p class="rotulo"><b>Migue</b> cómo funciona</p><img class="logo-sup" src="img/logo-horizontal-color.png" alt="">
   <div class="cont">
@@ -269,7 +270,7 @@ h1, h2, h3 { font-weight: 700; }
 </section>
 
 <!-- ===================== 10. EN VIVO: ESCRIBILE ===================== -->
-<section class="slide blue" data-escena="precarga" data-globo="¡Dale, escribime!" data-globo-estilo="blanco" data-globo-demora="1500"
+<section data-transicion="petalo" class="slide blue" data-escena="precarga" data-globo="¡Dale, escribime!" data-globo-estilo="blanco" data-globo-demora="1500"
   data-notas="Invitar a la sala a escribirle a Migue ahora, por la web o por Telegram. Dar un minuto. Después pasar a la placa siguiente: el panel de Migue en vivo, para ver lo que están preguntando y analizarlo juntos.">
   <p class="rotulo"><b>Migue</b> en vivo</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
   <div class="cont" style="gap:44px">
@@ -290,7 +291,7 @@ h1, h2, h3 { font-weight: 700; }
 </section>
 
 <!-- ===================== 12. LOS DATOS ===================== -->
-<section class="slide blue" data-escena="datos"
+<section data-transicion="petalo" class="slide blue" data-escena="datos"
   data-notas="Lo que vimos, en números (panel de Migue, septiembre de 2026): más de 13.000 consultas, casi 5.000 vecinos distintos, 9 de cada 10 con respuesta concreta. Tres de cada cuatro consultas son sobre trámites. Es la demanda real del vecino, no la que se supone. Y las que no se pudieron responder le dicen al municipio qué información falta cargar. ACTUALIZAR los números el día del evento.">
   <p class="rotulo"><b>Migue</b> lo que vemos</p><img class="logo-sup" src="img/logo-horizontal-blanco.png" alt="">
   <div class="cont" style="gap:36px">
@@ -355,7 +356,7 @@ h1, h2, h3 { font-weight: 700; }
 </section>
 
 <!-- ===================== 16. CIERRE ===================== -->
-<section class="slide blue"
+<section data-transicion="petalo" class="slide blue"
   data-notas="Decirlo despacio. No se trata solamente de incorporar una nueva tecnología: se trata de empezar a construir una Municipalidad que entienda mejor.">
   <div class="cont centro" style="gap:56px">
     <h2 class="t2 a fade" style="--d:.2s; line-height:1.2">Por primera vez, la inteligencia artificial entra de manera directa en la relación entre San Miguel de Tucumán y sus vecinos.</h2>
@@ -448,6 +449,18 @@ h1, h2, h3 { font-weight: 700; }
 </style>
 
 <!-- ===================== MIGUE ===================== -->
+<div id="luz"></div>
+<div id="qrs">
+  <h2>Escribile a Migue ahora.</h2>
+  <div class="fila">
+    <div class="qr"><img src="img/qr-smt.svg" alt="Código QR a smt.gob.ar"><b>smt.gob.ar</b><span>Botón de Migue, abajo a la derecha</span></div>
+    <div class="qr"><img src="img/qr-telegram.svg" alt="Código QR al bot de Telegram"><b>@MigueSMT_bot</b><span>En Telegram</span></div>
+  </div>
+</div>
+<div id="vivo">
+  <div class="cab"><span class="envivo"><i></i>EN VIVO</span><span>Preguntale a Migue</span><span class="sub">Respuesta real, en este momento</span></div>
+  <div class="hilo"></div>
+</div>
 <div id="globo"></div>
 <div id="migue">
   <div id="disco"></div>
@@ -455,6 +468,13 @@ h1, h2, h3 { font-weight: 700; }
   <canvas id="lienzo"></canvas>
   <div id="habla"><img src="img/migue-cara.png" alt=""><span>Migue</span><span class="barras"><i></i><i></i><i></i><i></i><i></i><i></i></span></div>
 </div>
+
+<canvas id="azahar" width="1920" height="1080"></canvas>
+<div id="barrido">
+  <svg class="p1" viewBox="0 0 400 1000" aria-hidden="true"><path d="M200 0 C 430 300 430 700 200 1000 C -30 700 -30 300 200 0 Z" fill="#0066ff"/></svg>
+  <svg class="p2" viewBox="0 0 400 1000" aria-hidden="true"><path d="M200 0 C 430 300 430 700 200 1000 C -30 700 -30 300 200 0 Z" fill="#2eb1ff"/></svg>
+</div>
+<div id="negro"></div>
 
 <div id="ayuda">
   <b>→ · Espacio · AvPág</b> placa siguiente<br>
@@ -465,6 +485,8 @@ h1, h2, h3 { font-weight: 700; }
   <b>0</b> vuelve la lista de videos al principio<br>
   <b>H</b> oculta/muestra a Migue · <b>F</b> pantalla completa<br>
   <b>D</b> abre el panel de Migue en otra pestaña<br>
+  <b>A</b> lluvia de azahar · <b>L</b> foco en Migue · <b>Q</b> QR gigante<br>
+  <b>X</b> cierra la pregunta en vivo<br>
   <b>?</b> esta ayuda
 </div>
 
@@ -475,6 +497,7 @@ h1, h2, h3 { font-weight: 700; }
 </div>
 </div>
 
+<script src="efectos.js"></script>
 <script>
 // =====================================================================
 // CONFIGURACIÓN
@@ -492,7 +515,7 @@ const VIDEOS = [
   { archivo: 'media/migue7.mp4', texto: 'Pero el vecino no piensa así' },
   { archivo: 'media/migue9.mp4', texto: 'Entonces, empecemos por ahí' },
   // Fondo magenta (no verde): el verde se confundía con los tallos del ramo.
-  { archivo: 'media/migueflores1.mp4', texto: 'Flores para la Intendenta', geo: 'flores', croma: 'magenta' },
+  { archivo: 'media/migueflores1.mp4', texto: 'Flores para la Intendenta', geo: 'flores', croma: 'magenta', azahar: true },
 ];
 // Animaciones de espera (sin sonido). Se alternan mientras Migue escucha.
 const LOOPS = ['media/migueloop1.mp4', 'media/migueloop2.mp4', 'media/migueloop3.mp4'];
@@ -653,6 +676,7 @@ const migue = (() => {
     if (i < 0 || i >= clips.length) return;
     api.callar(true);
     clipActual = i; proximo = Math.min(i + 1, clips.length - 1 + 1);
+    if (VIDEOS[i].azahar && window.efectos) setTimeout(() => window.efectos.azahar(), 1200);
     const c = clips[i];
     c.v.currentTime = 0; c.v.muted = false;
     globo.classList.remove('ver');
@@ -906,17 +930,33 @@ const escenas = (() => {
 // =====================================================================
 // CONTROLES: teclado, clicker y control remoto
 // =====================================================================
+// Cambia de placa; en las marcadas con data-transicion="petalo" pasa un barrido.
+function cambiar(n) {
+  n = Math.max(0, Math.min(placas.length - 1, n));
+  if (n === actual) return;
+  if (placas[n].dataset.transicion === 'petalo' && window.efectos) window.efectos.barrido(() => irA(n));
+  else irA(n);
+}
+window.migueHablando = () => migue.hablando;
 function ejecutar(c) {
   switch (c.cmd) {
-    case 'siguiente': irA(actual + 1); break;
-    case 'anterior': irA(actual - 1); break;
-    case 'ir': irA(c.n | 0); break;
+    case 'siguiente': cambiar(actual + 1); break;
+    case 'anterior': cambiar(actual - 1); break;
+    case 'ir': cambiar(c.n | 0); break;
+    case 'preguntar': window.vivo.preguntar(c.texto); break;
+    case 'cerrar-pregunta': window.vivo.cerrar(); break;
+    case 'azahar': window.efectos.azahar(); break;
+    case 'foco': window.efectos.foco(c.on); break;
+    case 'foco-auto': window.efectos.focoAuto(c.on); break;
+    case 'qr': window.efectos.qr(c.on); break;
+    case 'negro': window.efectos.negro(c.on); break;
     case 'migue': migue.decir(c.n != null ? c.n : undefined); break;
     case 'callar': migue.callar(); break;
     case 'repetir': migue.repetir(); break;
     case 'reiniciar': migue.reiniciar(); break;
     case 'ocultar': migue.alternar(); break;
   }
+  setTimeout(informar, 60);
 }
 window.migue = { ejecutar, debug: () => migue.debug() }; // para probar desde la consola
 
@@ -933,8 +973,12 @@ document.getElementById('inicio').addEventListener('click', empezar);
 addEventListener('keydown', (e) => {
   if (!empezado) { empezar(); return; }
   const k = e.key;
-  if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); irA(actual + 1); }
-  else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); irA(actual - 1); }
+  if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); cambiar(actual + 1); }
+  else if (['ArrowLeft', 'PageUp', 'ArrowUp', 'Backspace'].includes(k)) { e.preventDefault(); cambiar(actual - 1); }
+  else if (k === 'a' || k === 'A') window.efectos.azahar();
+  else if (k === 'l' || k === 'L') window.efectos.foco();
+  else if (k === 'q' || k === 'Q') window.efectos.qr();
+  else if (k === 'x' || k === 'X') window.vivo.cerrar();
   else if (['Enter', 'm', 'M', 'b', 'B', '.'].includes(k)) { e.preventDefault(); migue.decir(); }
   else if (k >= '1' && k <= '9') migue.decir(parseInt(k, 10) - 1);
   else if (k === '0') migue.reiniciar();
@@ -964,6 +1008,9 @@ function informar() {
     hablando: migue.hablando, proximo: migue.proximo(), actual: migue.actual(),
     oculto: document.getElementById('migue').classList.contains('oculto'),
     videos: VIDEOS.map(v => v.texto), empezado,
+    placas: placas.map((q, i) => (i + 1) + '. ' + ((q.querySelector('h1, h2') || {}).textContent || '').slice(0, 60)),
+    efectos: window.efectos ? window.efectos.estado() : {},
+    vivo: window.vivo ? window.vivo.estado() : null,
   };
   remoto.enviarEstado(estado);
 }

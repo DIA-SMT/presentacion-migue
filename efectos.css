@@ -1,0 +1,61 @@
+/* =====================================================================
+   Recursos en vivo: se disparan desde el celular (control.html) o el teclado.
+   ===================================================================== */
+
+/* ---------- Foco en Migue: la placa se apaga y Migue queda iluminado ---------- */
+.slide { transition: opacity .6s ease, visibility 0s linear .6s, filter .6s ease; }
+.slide.on { transition: opacity .6s ease, filter .6s ease; }
+#stage.foco .slide.on, #stage.envivo .slide.on { filter: brightness(.42) saturate(.6) blur(3px); }
+#luz { position: absolute; left: 1180px; top: 250px; width: 980px; height: 980px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,250,220,.55) 0%, rgba(255,250,220,.18) 38%, rgba(255,250,220,0) 62%);
+  opacity: 0; transform: scale(.85); transition: opacity .6s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
+#stage.foco #luz { opacity: 1; transform: none; }
+
+/* ---------- Lluvia de azahar ---------- */
+#azahar { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; }
+
+/* ---------- Barrido de pétalos entre placas ---------- */
+#barrido { position: absolute; inset: 0; pointer-events: none; overflow: hidden; visibility: hidden; }
+#barrido.va { visibility: visible; }
+#barrido svg { position: absolute; top: -380px; height: 1840px; width: auto; }
+#barrido .p1 { left: -1500px; }
+#barrido .p2 { left: -1900px; }
+#barrido.va .p1 { animation: barrer 1.05s cubic-bezier(.65,0,.35,1) forwards; }
+#barrido.va .p2 { animation: barrer 1.05s cubic-bezier(.65,0,.35,1) .09s forwards; }
+@keyframes barrer { from { transform: translateX(0) rotate(-18deg); } to { transform: translateX(4300px) rotate(-18deg); } }
+
+/* ---------- QR gigante ---------- */
+#qrs { position: absolute; inset: 0; background: var(--azul); color: #fff; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 48px; padding: 0 0 0 208px; opacity: 0; visibility: hidden; transition: opacity .5s ease, visibility 0s linear .5s; }
+#qrs.ver { opacity: 1; visibility: visible; transition: opacity .5s ease; }
+#qrs h2 { font-size: 88px; line-height: 1.05; font-weight: 800; letter-spacing: -2px; }
+#qrs .fila { display: flex; gap: 48px; }
+#qrs .qr { background: #fff; color: var(--gris); border-radius: 40px; padding: 36px; display: flex; flex-direction: column; align-items: center; gap: 18px; width: 520px; }
+#qrs .qr img { width: 400px; height: 400px; }
+#qrs .qr b { font-size: 40px; font-weight: 800; color: var(--azul); }
+#qrs .qr span { font-size: 26px; color: var(--suave); }
+
+/* ---------- Pantalla negra ---------- */
+#negro { position: absolute; inset: 0; background: #000; opacity: 0; visibility: hidden; transition: opacity .6s ease, visibility 0s linear .6s; z-index: 8; }
+#negro.ver { opacity: 1; visibility: visible; transition: opacity .6s ease; }
+
+/* ---------- Preguntale a Migue, en vivo ---------- */
+#vivo { position: absolute; left: 128px; top: 130px; width: 1290px; height: 830px; border-radius: 44px; background: rgba(15,22,35,.93); color: #fff;
+  box-shadow: 0 40px 120px rgba(0,0,0,.45); display: flex; flex-direction: column; padding: 44px 56px 48px; gap: 28px;
+  opacity: 0; visibility: hidden; transform: translateY(40px) scale(.97); transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1), visibility 0s linear .5s; }
+#vivo.ver { opacity: 1; visibility: visible; transform: none; transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1); }
+#vivo .cab { display: flex; align-items: center; gap: 18px; font-size: 26px; font-weight: 600; }
+#vivo .envivo { display: inline-flex; align-items: center; gap: 10px; background: #e5484d; color: #fff; border-radius: 999px; padding: 6px 18px; font-size: 22px; font-weight: 800; letter-spacing: 2px; }
+#vivo .envivo i { width: 12px; height: 12px; border-radius: 50%; background: #fff; animation: latido 1.2s infinite; }
+@keyframes latido { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+#vivo .cab .sub { margin-left: auto; font-size: 22px; font-weight: 500; opacity: .7; }
+#vivo .hilo { flex: 1; overflow: hidden; display: flex; flex-direction: column; gap: 26px; scroll-behavior: smooth; }
+#vivo .preg { align-self: flex-end; max-width: 84%; background: var(--azul); border-radius: 36px 36px 8px 36px; padding: 26px 36px; font-size: 44px; line-height: 1.25; font-weight: 600; }
+#vivo .resp { align-self: flex-start; max-width: 92%; display: flex; gap: 22px; align-items: flex-start; }
+#vivo .resp img { width: 76px; height: 76px; border-radius: 50%; background: var(--amarillo); object-fit: cover; flex: none; }
+#vivo .resp .txt { background: #fff; color: var(--gris); border-radius: 8px 36px 36px 36px; padding: 28px 36px; font-size: 36px; line-height: 1.4; }
+#vivo .resp .txt.chica { font-size: 30px; }
+#vivo .resp .txt b { color: var(--azul); }
+#vivo .pensando { display: flex; gap: 12px; padding: 14px 4px; }
+#vivo .pensando i { width: 18px; height: 18px; border-radius: 50%; background: #9aa3b2; animation: punto 1s infinite; }
+#vivo .pensando i:nth-child(2) { animation-delay: .15s; } #vivo .pensando i:nth-child(3) { animation-delay: .3s; }
+#vivo .error { color: #ffb4b4; font-size: 30px; }

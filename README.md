@@ -15,6 +15,7 @@ Presentación del lanzamiento de Migue, el asistente virtual de la Municipalidad
 | Callar · repetir · volver al video 1 | S · R · 0 |
 | Ocultar a Migue · pantalla completa · ayuda | H · F · ? |
 | Abrir el panel de Migue en otra pestaña | D |
+| Lluvia de azahar · foco en Migue · QR gigante · cerrar la pregunta en vivo | A · L · Q · X |
 
 **Control remoto (celular):** la pantalla y el celular se abren con el mismo código de sala en el link:
 
@@ -23,10 +24,19 @@ Presentación del lanzamiento de Migue, el asistente virtual de la Municipalidad
 
 Publicada, se comunican por un canal en tiempo real de Supabase (`remoto.js`, `config.js`). En local, por `server.js`. El código de sala va solo en el link, nunca en el repo.
 
+## Recursos en vivo (desde el celular)
+
+- **Preguntale a Migue:** la pregunta aparece en la pantalla grande y Migue contesta con su chat real (`api/preguntar.js` reenvía a `migue.smt.gob.ar/api/chat`; en Vercel exige la variable `SALA_CODE`, igual al código de sala del link).
+- **Lluvia de azahar:** pétalos con los colores de la ciudad; sale sola con el video de las flores.
+- **Foco en Migue:** apaga la placa e ilumina a Migue; en automático, cuando habla.
+- **QR gigante** y **pantalla negra**.
+- **Barrido de pétalos** al entrar a las placas marcadas con `data-transicion="petalo"`.
+
 ## Archivos
 
 - `index.html` — placas, Migue (recorte WebGL) y escenas animadas. La lista `VIDEOS` define el orden y el nombre de cada video.
-- `control.html` — control remoto con las notas de cada placa.
+- `control.html` — consola del celular: placas y notas, videos de Migue, pregunta en vivo y efectos.
+- `efectos.js` / `efectos.css` — recursos en vivo.
 - `media/` — videos de Migue sobre verde (`migue*.mp4`) y loops de espera (`migueloop*.mp4`).
 - `server.js` — servidor local para usarla sin internet.
 

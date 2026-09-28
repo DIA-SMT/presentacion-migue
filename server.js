@@ -63,6 +63,25 @@ http.createServer(async (req, res) => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         return res.end(JSON.stringify({ ok: true, pantallas: oyentes.size }));
     }
+    // Pregunta en vivo: se reenvía al chat web real de Migue (ver api/preguntar.js).
+    if (url.pathname === '/api/preguntar' && req.method === 'POST') {
+        let body = {};
+        try { body = JSON.parse(await leerCuerpo(req)); } catch { }
+        const mensaje = String(body.mensaje || '').trim().slice(0, 400);
+        const sessionId = String(body.sessionId || 'presentacion').slice(0, 80);
+        res.setHeader('Content-Type', 'application/json');
+        if (!mensaje) { res.writeHead(400); return res.end(JSON.stringify({ error: 'Falta la pregunta' })); }
+        try {
+            const r = await fetch('https://migue.smt.gob.ar/api/chat', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mensaje, sessionId }), signal: AbortSignal.timeout(55000),
+            });
+            const j = await r.json().catch(() => ({}));
+            res.writeHead(r.status); return res.end(JSON.stringify({ respuesta: j.respuesta || null, error: j.error || null }));
+        } catch (e) {
+            res.writeHead(502); return res.end(JSON.stringify({ error: 'Migue no respondió a tiempo' }));
+        }
+    }
     if (url.pathname === '/estado') {
         if (req.method === 'POST') { try { ultimoEstado = JSON.parse(await leerCuerpo(req)); } catch { } res.writeHead(204); return res.end(); }
         res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache' });
