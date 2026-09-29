@@ -90,11 +90,23 @@
 
   // ---------------------------------------------------------------- en vivo
   // La pregunta viaja a /api/preguntar, que la reenvía al chat web real de
-  // Migue (el mismo del sitio smt.gob.ar). La respuesta queda registrada en
-  // el panel como cualquier otra consulta.
+  // Migue (el mismo del sitio smt.gob.ar).
+  //
+  // QUE NUNCA FALLE EN EL ESCENARIO
+  //   Las preguntas preparadas se le hacen a Migue apenas se abre la
+  //   presentación, y sus respuestas (reales) quedan guardadas. En el
+  //   escenario se muestran al instante, sin depender de la red. Una pregunta
+  //   nueva va en vivo, con reintentos; si igual no hay respuesta, Migue lo
+  //   dice con sus palabras, nunca con un mensaje técnico.
+  const PREGUNTAS = [
+    'Ehh, necesito llegar rápido al trabajo, ¿hay algún corte en la San Lorenzo hoy?',
+    '¿Cómo habilito un negocio?',
+    '¿Cuándo es la fiesta de la ciudad?',
+  ];
   const vivoEl = document.getElementById('vivo'), hilo = vivoEl.querySelector('.hilo');
   const sesion = 'presentacion-' + Date.now().toString(36);
-  let estadoVivo = null, tipeo = null;
+  const guardadas = new Map();
+  let estadoVivo = null, tipeo = null, proxima = 0, codigo = 'probando', precargando = false;
   function escapar(t) { return t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
   function formatear(t) {
     return escapar(t.trim())
@@ -117,30 +129,68 @@
       if (i >= partes.length) { clearInterval(tipeo); alTerminar && alTerminar(); }
     }, 22);
   }
-  async function preguntar(texto) {
-    texto = String(texto || '').trim().slice(0, 400);
-    if (!texto) return;
+  // Una consulta al puente. Devuelve el texto de Migue o lanza un error con .status.
+  async function consultar(texto, n, esperaMax) {
+    const sala = (window.Remoto && window.Remoto.sala) || '';
+    const ctrl = new AbortController(); const corte = setTimeout(() => ctrl.abort(), esperaMax);
+    try {
+      const r = await fetch('api/preguntar', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-sala': sala }, body: JSON.stringify({ mensaje: texto, sessionId: sesion + '-' + n }), signal: ctrl.signal });
+      const j = await r.json().catch(() => ({}));
+      if (r.status === 403) { codigo = 'mal'; const e = new Error('sala'); e.status = 403; throw e; }
+      if (!r.ok || !j.respuesta) { const e = new Error(j.error || 'HTTP ' + r.status); e.status = r.status; throw e; }
+      codigo = 'ok';
+      return j.respuesta;
+    } finally { clearTimeout(corte); }
+  }
+  // Prepara las respuestas de las preguntas de la botonera. Reintenta cada 20 s
+  // las que falten, hasta tenerlas todas.
+  async function precargar() {
+    if (precargando) return; precargando = true;
+    for (let i = 0; i < PREGUNTAS.length; i++) {
+      if (guardadas.has(PREGUNTAS[i])) continue;
+      try { guardadas.set(PREGUNTAS[i], await consultar(PREGUNTAS[i], 'p' + i, 60000)); }
+      catch (e) { if (e.status === 403) break; }
+      avisar();
+    }
+    precargando = false; avisar();
+    if (guardadas.size < PREGUNTAS.length && codigo !== 'mal') setTimeout(precargar, 20000);
+  }
+  function mostrar(texto) {
     clearInterval(tipeo);
     vivoEl.classList.add('ver'); stage.classList.add('envivo');
     hilo.innerHTML = `<div class="preg">${escapar(texto)}</div><div class="resp"><img src="img/migue-cara.png" alt=""><div class="txt"><div class="pensando"><i></i><i></i><i></i></div></div></div>`;
-    const txt = hilo.querySelector('.resp .txt');
-    estadoVivo = 'pensando'; avisar();
-    try {
-      const sala = (window.Remoto && window.Remoto.sala) || '';
-      const ctrl = new AbortController(); const corte = setTimeout(() => ctrl.abort(), 60000);
-      const r = await fetch('api/preguntar', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-sala': sala }, body: JSON.stringify({ mensaje: texto, sessionId: sesion }), signal: ctrl.signal });
-      clearTimeout(corte);
-      const j = await r.json().catch(() => ({}));
-      if (!r.ok || !j.respuesta) throw new Error(j.error || ('HTTP ' + r.status));
-      if (j.respuesta.length > 420) txt.classList.add('chica');
-      estadoVivo = 'respondiendo'; avisar();
-      tipear(txt, formatear(j.respuesta), () => { estadoVivo = 'respondida'; avisar(); });
-    } catch (e) {
-      txt.innerHTML = `<span class="error">No pude conectarme con Migue en este momento.</span>`;
-      estadoVivo = 'error'; avisar(); console.warn('preguntar:', e);
-    }
+    return hilo.querySelector('.resp .txt');
   }
+  function escribir(txt, respuesta) {
+    if (respuesta.length > 420) txt.classList.add('chica');
+    estadoVivo = 'respondiendo'; avisar();
+    tipear(txt, formatear(respuesta), () => { estadoVivo = 'respondida'; avisar(); });
+  }
+  async function preguntar(texto) {
+    texto = String(texto || '').trim().slice(0, 400);
+    if (!texto) return;
+    const txt = mostrar(texto);
+    estadoVivo = 'pensando'; avisar();
+    // Preparada: un momento de "pensando" y la respuesta, sin tocar la red.
+    if (guardadas.has(texto)) { setTimeout(() => { if (estadoVivo === 'pensando') escribir(txt, guardadas.get(texto)); }, 1600); return; }
+    for (let intento = 0; intento < 3; intento++) {
+      try { const r = await consultar(texto, 'v' + Date.now().toString(36), 40000); if (estadoVivo !== 'pensando') return; guardadas.set(texto, r); escribir(txt, r); return; }
+      catch (e) { if (e.status === 403) break; await new Promise(ok => setTimeout(ok, 1200)); }
+    }
+    if (estadoVivo !== 'pensando') return;
+    escribir(txt, 'Uy, justo ahora no puedo ir a buscar ese dato. Preguntámelo en un ratito desde smt.gob.ar o por Telegram y te respondo.');
+    estadoVivo = 'respondiendo';
+  }
+  function preguntarSiguiente() { const t = PREGUNTAS[proxima % PREGUNTAS.length]; proxima++; preguntar(t); }
   function cerrar() { clearInterval(tipeo); vivoEl.classList.remove('ver'); stage.classList.remove('envivo'); estadoVivo = null; avisar(); }
   function avisar() { window.informar && window.informar(); }
-  window.vivo = { preguntar, cerrar, estado: () => estadoVivo };
+  window.vivo = {
+    preguntar, preguntarSiguiente, cerrar, precargar,
+    estado: () => estadoVivo,
+    proxima: () => PREGUNTAS[proxima % PREGUNTAS.length],
+    chequeo: () => ({ codigo, listas: guardadas.size, total: PREGUNTAS.length }),
+    // Para revisar desde la consola qué va a responder Migue a cada pregunta preparada.
+    respuestas: () => Object.fromEntries(guardadas),
+  };
+  precargar();
 })();

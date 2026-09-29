@@ -100,7 +100,8 @@ h1, h2, h3 { font-weight: 700; }
 #inicio .ini-izq { display: flex; flex-direction: column; align-items: center; gap: 36px; }
 #inicio .ini-izq img { width: 300px; }
 #inicio .ini-izq p { font-size: 40px; font-weight: 600; }
-#inicio .ini-izq small { font-size: 24px; opacity: .9; }
+#inicio .ini-izq small { position: absolute; left: 0; right: 0; bottom: 36px; text-align: center; font-size: 18px; opacity: .35; }
+#inicio .ini-der[hidden] { display: none; }
 #inicio .ini-der { width: 420px; background: rgba(255,255,255,.12); border-radius: 36px; padding: 36px; display: flex; flex-direction: column; align-items: center; gap: 20px; cursor: default; }
 #inicio .ini-tit { font-size: 30px; font-weight: 700; }
 #inicio .ini-qr { width: 300px; height: 300px; background: #fff; border-radius: 22px; padding: 16px; display: flex; align-items: center; justify-content: center; }
@@ -602,9 +603,10 @@ h1, h2, h3 { font-weight: 700; }
   </div>
 </div>
 <div id="vivo">
-  <div class="cab"><span class="envivo"><i></i>EN VIVO</span><span>Preguntale a Migue</span><span class="sub">Respuesta real, en este momento</span></div>
+  <div class="cab"><span class="envivo"><i></i>EN VIVO</span><span>Preguntale a Migue</span><span class="sub">Respuesta real de Migue</span></div>
   <div class="hilo"></div>
 </div>
+<div id="subtitulo"></div>
 <div id="globo"></div>
 <div id="migue">
   <div id="disco"></div>
@@ -637,10 +639,9 @@ h1, h2, h3 { font-weight: 700; }
 <div id="inicio">
   <div class="ini-izq">
     <img src="img/logo-vertical-blanco.png" alt="">
-    <p>Tocá o apretá una tecla para empezar</p>
-    <small>Activa el sonido de Migue y la pantalla completa</small>
+    <small>Tocá para empezar · T: vincular el celular</small>
   </div>
-  <div class="ini-der" id="vinculo">
+  <div class="ini-der" id="vinculo" hidden>
     <p class="ini-tit">Botonera del celular</p>
     <div class="ini-qr" id="vinculoQr"></div>
     <p class="ini-estado" id="vinculoEstado"><i></i><span>Conectando…</span></p>
@@ -666,14 +667,14 @@ const VIDEOS = [
   // Con esto empieza todo: Migue le regala flores a la Intendenta.
   // Fondo magenta (no verde): el verde se confundía con los tallos del ramo.
   { archivo: 'media/migueflores1.mp4', texto: 'Flores para la Intendenta', geo: 'flores', croma: 'magenta' },
-  { archivo: 'media/migue1.mp4', texto: 'No tengo un botón para el bache' },
-  { archivo: 'media/migue2.mp4', texto: 'Vos me contás qué te pasa' },
-  { archivo: 'media/migue3.mp4', texto: 'No sólo converso' },
-  { archivo: 'media/migue4.mp4', texto: 'Entiendo, organizo, busco y ayudo' },
-  { archivo: 'media/migue5.mp4', texto: 'Eso último era importante' },
-  { archivo: 'media/migue6.mp4', texto: 'Me enseñaron cómo trabajar' },
-  { archivo: 'media/migue7.mp4', texto: 'Pero el vecino no piensa así' },
-  { archivo: 'media/migue9.mp4', texto: 'Entonces, empecemos por ahí' },
+  { archivo: 'media/migue1.mp4', texto: 'No tengo un botón para el bache', sub: 'O sea… no tengo un botón escondido que dice “respuesta para bache”.' },
+  { archivo: 'media/migue2.mp4', texto: 'Vos me contás qué te pasa', sub: 'Vos me contás qué te pasa. Yo intento entender qué necesitás.' },
+  { archivo: 'media/migue3.mp4', texto: 'No sólo converso', sub: 'En otras palabras… no sólo converso.' },
+  { archivo: 'media/migue4.mp4', texto: 'Entiendo, organizo, busco y ayudo', sub: 'Yo entiendo, organizo, busco… y ayudo.' },
+  { archivo: 'media/migue5.mp4', texto: 'Eso último era importante', sub: 'Eso último era importante aclararlo.' },
+  { archivo: 'media/migue6.mp4', texto: 'Me enseñaron cómo trabajar', sub: 'Básicamente… me enseñaron cómo trabajar.' },
+  { archivo: 'media/migue7.mp4', texto: 'Pero el vecino no piensa así', sub: 'Pero el vecino no piensa así.' },
+  { archivo: 'media/migue9.mp4', texto: 'Entonces, empecemos por ahí', sub: 'Entonces… empecemos por ahí.' },
 ];
 // Animaciones de espera (sin sonido). Se alternan mientras Migue escucha.
 const LOOPS = ['media/migueloop1.mp4', 'media/migueloop2.mp4', 'media/migueloop3.mp4'];
@@ -851,6 +852,8 @@ const migue = (() => {
     globo.classList.remove('ver');
     try { if (ctx && ctx.state === 'suspended') await ctx.resume(); await c.v.play(); } catch (e) { console.warn('No se pudo reproducir', e); return; }
     api.hablando = true; cont.classList.add('hablando');
+    const sub = document.getElementById('subtitulo');
+    if (VIDEOS[i].sub) { const t = document.createElement('span'); t.textContent = VIDEOS[i].sub; sub.replaceChildren(t); sub.classList.add('ver'); } else sub.classList.remove('ver');
     // Mientras habla, el loop de espera se pausa (queda su último cuadro para el fundido).
     setTimeout(() => { if (api.hablando) { const l = loops[loopActual]; if (l && !l.v.paused) l.v.pause(); } }, 450);
     c.v.onended = () => { if (clipActual === i) terminar(); };
@@ -858,6 +861,7 @@ const migue = (() => {
   };
   function terminar() {
     api.hablando = false; cont.classList.remove('hablando');
+    document.getElementById('subtitulo').classList.remove('ver');
     // Vuelve la espera: el loop estuvo en pausa mientras Migue hablaba.
     const l = loops[loopActual]; if (l && l.v.paused) l.v.play().catch(() => { });
     informar();
@@ -1247,6 +1251,7 @@ function ejecutar(c) {
     case 'anterior': cambiar(base() - 1); break;
     case 'ir': cambiar(c.n | 0); break;
     case 'preguntar': window.vivo.preguntar(c.texto); break;
+    case 'preguntar-siguiente': window.vivo.preguntarSiguiente(); break;
     case 'cerrar-pregunta': window.vivo.cerrar(); break;
     case 'azahar': window.efectos.azahar(c.on); break;
     case 'foco': window.efectos.foco(c.on); break;
@@ -1275,6 +1280,7 @@ document.getElementById('inicio').addEventListener('click', empezar);
 
 addEventListener('keydown', (e) => {
   if (e.target && e.target.closest && e.target.closest('#vinculo')) return; // escribiendo el código de sala
+  if (!empezado && (e.key === 't' || e.key === 'T')) { const v = document.getElementById('vinculo'); v.hidden = !v.hidden; return; }
   if (!empezado) { empezar(); return; }
   const k = e.key;
   if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); cambiar(base() + 1); }
@@ -1312,6 +1318,7 @@ setInterval(() => informar(), 2000); // latido: el celular sabe que la pantalla 
     qr.style.display = 'none';
     est.querySelector('span').textContent = remoto.modo === 'ninguno' ? 'Sin control remoto en este modo' : 'Sin código, el celular no puede manejar la presentación';
     if (remoto.modo === 'sin-sala') {
+      caja.hidden = false;
       const f = document.getElementById('vinculoForm'); f.hidden = false;
       f.addEventListener('submit', (e) => { e.preventDefault(); const v = document.getElementById('vinculoCodigo').value.trim(); if (v) remoto.guardarSala(v); });
     }
@@ -1326,6 +1333,13 @@ setInterval(() => informar(), 2000); // latido: el celular sabe que la pantalla 
   };
   pintar(); setInterval(pintar, 1500);
 })();
+// Chequeo previo, para el celular del presentador (no se ve en la pantalla grande).
+function chequeo() {
+  const d = window.migue.debug();
+  const listos = d.clips.filter(c => c[2] >= 3).length;
+  const v = window.vivo ? window.vivo.chequeo() : { codigo: 'probando', listas: 0, total: 0 };
+  return { videos: listos, totalVideos: d.clips.length, codigo: remoto.modo === 'local' ? 'ok' : v.codigo, respuestas: v.listas, totalRespuestas: v.total };
+}
 function informar() {
   const p = placas[actual];
   const estado = {
@@ -1338,6 +1352,8 @@ function informar() {
     placas: placas.map((q, i) => (i + 1) + '. ' + ((q.querySelector('h1, h2') || {}).textContent || '').slice(0, 60)),
     efectos: window.efectos ? window.efectos.estado() : {},
     vivo: window.vivo ? window.vivo.estado() : null,
+    proximaPregunta: window.vivo ? window.vivo.proxima() : '',
+    chequeo: chequeo(),
   };
   remoto.enviarEstado(estado);
 }

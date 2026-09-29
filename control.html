@@ -43,6 +43,19 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 .ef { background: #1a2332; border: 2px solid #2b3850; font-size: 17px; border-radius: 20px; }
 .ef.on { background: #3ecf8e; border-color: #3ecf8e; color: #0d2419; }
 
+/* Chequeo antes de empezar: sólo lo ve el presentador, en el celular. */
+#chequeo { position: fixed; left: 12px; right: 12px; top: calc(54px + env(safe-area-inset-top)); z-index: 8; background: #1a2332; border: 2px solid #2b3850; border-radius: 24px; padding: 18px 18px 16px; display: none; flex-direction: column; gap: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+#chequeo.ver { display: flex; }
+#chequeo h2 { font-size: 18px; font-weight: 800; }
+#chequeo ul { display: flex; flex-direction: column; gap: 10px; }
+#chequeo li { list-style: none; display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; color: #d3dae6; }
+#chequeo li i { width: 22px; height: 22px; border-radius: 50%; flex: none; background: #56627a; display: flex; align-items: center; justify-content: center; font-style: normal; font-size: 14px; color: #0f1623; font-weight: 800; }
+#chequeo li.ok i { background: #3ecf8e; } #chequeo li.ok i::after { content: "✓"; }
+#chequeo li.mal i { background: #e5484d; color: #fff; } #chequeo li.mal i::after { content: "!"; }
+#chequeo li.mal { color: #ffb4b4; }
+#chequeo .listo { margin-top: 4px; font-size: 16px; font-weight: 800; border-radius: 14px; padding: 12px 14px; background: #242f42; text-align: center; }
+#chequeo .listo.si { background: #3ecf8e; color: #0d2419; }
+
 /* Pedir el código de sala cuando falta. */
 #sala { position: fixed; inset: 0; z-index: 9; background: #0f1623; display: none; flex-direction: column; justify-content: center; gap: 16px; padding: 28px; }
 #sala.ver { display: flex; }
@@ -71,6 +84,17 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
   <button class="ef" id="pregunta">Pregunta<small>en vivo</small></button>
 </div>
 
+<div id="chequeo">
+  <h2>Antes de empezar</h2>
+  <ul>
+    <li id="ck-pantalla"><i></i><span>Pantalla conectada</span></li>
+    <li id="ck-codigo"><i></i><span>Código de sala</span></li>
+    <li id="ck-videos"><i></i><span>Videos de Migue</span></li>
+    <li id="ck-respuestas"><i></i><span>Preguntas en vivo preparadas</span></li>
+  </ul>
+  <p class="listo" id="ck-listo">Revisando…</p>
+</div>
+
 <form id="sala">
   <h1>Falta el código de sala</h1>
   <p>Escaneá el QR de la pantalla de inicio de la presentación, o escribí el código. Queda guardado en este celular.</p>
@@ -80,8 +104,7 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 
 <script>
 const $ = (id) => document.getElementById(id);
-// La pregunta en vivo de la botonera. Para elegir otra, usar control-completo.
-const PREGUNTA = 'Ehh, necesito llegar rápido al trabajo, ¿hay algún corte en la San Lorenzo hoy?';
+// La pantalla va pasando, en orden, las preguntas preparadas (ver efectos.js).
 let ultimo = null, conectado = false, textoConexion = 'Conectando…';
 
 const remoto = window.Remoto.iniciar({
@@ -116,9 +139,28 @@ boton('migue', () => ({ cmd: 'migue' }));
 boton('callar', () => ({ cmd: 'callar' }));
 boton('azahar', () => ({ cmd: 'azahar', on: !$('azahar').classList.contains('on') }));
 boton('qr', () => ({ cmd: 'qr', on: !$('qr').classList.contains('on') }));
-boton('pregunta', () => (ultimo && ultimo.vivo ? { cmd: 'cerrar-pregunta' } : { cmd: 'preguntar', texto: PREGUNTA }));
+boton('pregunta', () => (ultimo && ultimo.vivo ? { cmd: 'cerrar-pregunta' } : { cmd: 'preguntar-siguiente' }));
 
+function marca(id, estado, texto) { const li = $(id); li.className = estado; li.querySelector('span').textContent = texto; }
+function pintarChequeo() {
+  const e = ultimo, c = (e && e.chequeo) || null;
+  const antes = !e || e.empezado === false;
+  $('chequeo').classList.toggle('ver', antes && remoto.modo !== 'sin-sala');
+  if (!antes) return;
+  const ok = { pantalla: conectado && !!e, codigo: false, videos: false, respuestas: false };
+  marca('ck-pantalla', ok.pantalla ? 'ok' : 'mal', ok.pantalla ? 'Pantalla conectada' : 'Sin pantalla: abrila con el mismo código');
+  if (c) {
+    ok.codigo = c.codigo === 'ok'; ok.videos = c.videos >= c.totalVideos; ok.respuestas = c.respuestas >= c.totalRespuestas;
+    marca('ck-codigo', ok.codigo ? 'ok' : c.codigo === 'mal' ? 'mal' : '', ok.codigo ? 'Código de sala correcto' : c.codigo === 'mal' ? 'Código de sala incorrecto: abrí el link con el código correcto' : 'Probando el código…');
+    marca('ck-videos', ok.videos ? 'ok' : '', 'Videos de Migue: ' + c.videos + ' de ' + c.totalVideos);
+    marca('ck-respuestas', ok.respuestas ? 'ok' : c.codigo === 'mal' ? 'mal' : '', 'Preguntas en vivo preparadas: ' + c.respuestas + ' de ' + c.totalRespuestas);
+  }
+  const todo = ok.pantalla && ok.codigo && ok.videos && ok.respuestas;
+  $('ck-listo').classList.toggle('si', todo);
+  $('ck-listo').textContent = todo ? 'Todo listo. Tocá la pantalla grande para empezar.' : 'Todavía no: esperá a que todo esté en verde.';
+}
 function pintar() {
+  pintarChequeo();
   const e = ultimo;
   const sinEmpezar = conectado && e && e.empezado === false;
   const alerta = !conectado || sinEmpezar;
@@ -136,7 +178,10 @@ function pintar() {
   $('azahar').textContent = e.efectos && e.efectos.azahar ? 'Parar azahar' : 'Azahar';
   $('pregunta').classList.toggle('on', !!e.vivo);
   $('pregunta').firstChild.textContent = e.vivo ? 'Cerrar' : 'Pregunta';
+  $('pregunta').querySelector('small').textContent = e.vivo ? 'la pregunta' : corta(e.proximaPregunta || 'en vivo');
 }
+
+function corta(t) { t = String(t).replace(/^Ehh, necesito llegar rápido al trabajo, /, ''); return t.length > 26 ? t.slice(0, 25) + '…' : t; }
 
 // Que la pantalla del celular no se apague en medio de la charla.
 let candado = null;
