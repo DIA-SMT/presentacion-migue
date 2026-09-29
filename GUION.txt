@@ -58,13 +58,13 @@ PLACA 10 - Escribile a Migue ahora
            cómo habilito un negocio -> cuándo es la fiesta de la ciudad.
            El mismo botón cierra la pregunta.
 
-PLACA 11 - Cada conversación es un dato (tablero)
-  VOS:     13.022 consultas, 4.964 vecinos, 89% resueltas.
-           3 de cada 4 son trámites.
-
-PLACA 12 - Escuchamos al vecino de otra manera
+PLACA 11 - Escuchamos al vecino de otra manera
   VOS:     Cada pregunta nos dice qué necesita la ciudad, cuándo y qué le
            falta encontrar.
+
+PLACA 12 - Cada conversación es un dato (tablero)
+  VOS:     13.022 consultas, 4.964 vecinos, 89% resueltas.
+           3 de cada 4 son trámites.
 
 PLACA 13 - La inteligencia artificial es un servicio público
   VOS:     Por primera vez en Tucumán: para informarse, gestionar trámites y
