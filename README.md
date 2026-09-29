@@ -10,7 +10,7 @@ Presentación del lanzamiento de Migue, el asistente virtual de la Municipalidad
 | Acción | Teclado / clicker |
 |---|---|
 | Placa siguiente / anterior | → ← · AvPág RePág · Espacio |
-| Migue dice el próximo video | Enter · M · B · . |
+| Migue dice el próximo video · el anterior | Enter · M · B · . · N |
 | Migue dice un video puntual | 1 … 9 |
 | Callar · repetir · volver al video 1 | S · R · 0 |
 | Ocultar a Migue · pantalla completa · ayuda | H · F · ? |

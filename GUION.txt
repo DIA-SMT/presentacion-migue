@@ -1,7 +1,8 @@
 GUION DE PRÁCTICA - PRESENTACIÓN DE MIGUE
 ==========================================
 
-MIGUE = tocar "MIGUE HABLA" en la botonera (suena el próximo video, en orden).
+MIGUE = tocar "MIGUE HABLA" en la botonera, o la tecla M (suena el próximo video,
+en orden). Tecla N: suena el video anterior.
 
 Antes de empezar: abrir la presentación 10 minutos antes y esperar
 "Todo listo" en el celular.
