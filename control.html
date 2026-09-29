@@ -14,7 +14,7 @@
 @font-face { font-family: 'Poppins'; font-weight: 800; src: url(fonts/Poppins-ExtraBold.ttf); }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: #0f1623; color: #fff; font-family: 'Poppins', system-ui, sans-serif; user-select: none; overflow: hidden; touch-action: manipulation; }
-body { display: grid; grid-template-rows: auto 1.25fr 1.6fr .75fr .6fr; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); height: 100dvh; }
+body { display: grid; grid-template-rows: auto auto 1.25fr 1.6fr .75fr .6fr; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); height: 100dvh; }
 button { font-family: inherit; border: 0; color: inherit; border-radius: 24px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .08s ease, filter .15s ease, box-shadow .2s ease; position: relative; }
 button:active { transform: scale(.97); filter: brightness(1.25); }
 button small { font-size: 15px; font-weight: 600; opacity: .8; max-width: 92%; line-height: 1.25; text-align: center; }
@@ -57,6 +57,12 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 #chequeo .listo { margin-top: 4px; font-size: 16px; font-weight: 800; border-radius: 14px; padding: 12px 14px; background: #242f42; text-align: center; }
 #chequeo .listo.si { background: #3ecf8e; color: #0d2419; }
 
+/* Ayuda memoria: lo que decís vos en esta placa. */
+.guion { background: #1a2332; border-left: 4px solid #2eb1ff; border-radius: 12px; padding: 8px 12px; font-size: 15px; line-height: 1.35; color: #e8edf5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.guion b { color: #2eb1ff; font-size: 12px; letter-spacing: 1.5px; margin-right: 6px; }
+.guion:empty { display: none; }
+#migue small { font-style: italic; }
+
 /* Pedir el código de sala cuando falta. */
 #sala { position: fixed; inset: 0; z-index: 9; background: #0f1623; display: none; flex-direction: column; justify-content: center; gap: 16px; padding: 28px; }
 #sala.ver { display: flex; }
@@ -69,6 +75,8 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 <body>
 
 <div class="estado" id="estado"><span class="punto" id="punto"></span><span class="titulo" id="titulo">Conectando…</span><b id="num">–</b></div>
+
+<div class="guion" id="guion"></div>
 
 <button id="migue">MIGUE HABLA<small id="migueSub">Próximo video</small></button>
 
@@ -173,7 +181,10 @@ function pintar() {
   const v = e.videos || [];
   $('migue').classList.toggle('suena', !!e.hablando);
   $('migue').firstChild.textContent = e.hablando ? 'MIGUE HABLANDO' : 'MIGUE HABLA';
-  $('migueSub').textContent = e.hablando ? (v[e.actual] || '') : (v[e.proximo] ? `${e.proximo + 1}. ${v[e.proximo]}` : 'No quedan videos');
+  // Debajo de MIGUE HABLA: la frase que va a decir (o el nombre del video si no tiene).
+  const frase = e.fraseProxima ? '“' + corta2(e.fraseProxima, 90) + '”' : (v[e.proximo] || '');
+  $('migueSub').textContent = e.hablando ? (v[e.actual] || '') : (v[e.proximo] ? (e.proximo + 1) + '. ' + frase : 'No quedan videos');
+  const gu = $('guion'); gu.innerHTML = ''; if (e.guion) { const b = document.createElement('b'); b.textContent = 'VOS'; gu.append(b, document.createTextNode(e.guion)); }
   $('azahar').classList.toggle('on', !!(e.efectos && e.efectos.azahar));
   $('azahar').textContent = e.efectos && e.efectos.azahar ? 'Parar azahar' : 'Azahar';
   $('pregunta').classList.toggle('on', !!e.vivo);
@@ -181,6 +192,7 @@ function pintar() {
   $('pregunta').querySelector('small').textContent = e.vivo ? 'la pregunta' : corta(e.proximaPregunta || 'en vivo');
 }
 
+function corta2(t, n) { t = String(t); return t.length > n ? t.slice(0, n - 1) + '…' : t; }
 function corta(t) { t = String(t).replace(/^Ehh, necesito llegar rápido al trabajo, /, ''); return t.length > 26 ? t.slice(0, 25) + '…' : t; }
 
 // Que la pantalla del celular no se apague en medio de la charla.

@@ -34,52 +34,50 @@ PLACA 5 - Esa diferencia es fundamental
   VOS:     La IA interpreta. Los sistemas municipales ejecutan. Las personas
            deciden.
   MIGUE 5: "Yo entiendo, organizo, busco… y ayudo."
-
-PLACA 6 - Nosotros definimos qué puede hacer, con qué información y hasta dónde
   VOS:     Y nosotros definimos qué puede hacer, con qué información y hasta
            dónde.
   MIGUE 6: "Eso último era importante aclararlo."
 
-PLACA 7 - Una IA sola no conoce San Miguel de Tucumán
+PLACA 6 - Una IA sola no conoce San Miguel de Tucumán
   VOS:     Muchísimo. Tuvimos que darle datos, contexto, reglas y acceso
            controlado a las herramientas municipales.
   MIGUE 7: "Básicamente… me enseñaron cómo trabajar."
 
-PLACA 8 - Durante décadas, los servicios se ordenaron según la estructura del Estado
+PLACA 7 - Durante décadas, los servicios se ordenaron según la estructura del Estado
   VOS:     Exactamente. Secretarías, direcciones, dependencias, trámites.
   MIGUE 8: "Pero el vecino no piensa así."
 
-PLACA 9 - El vecino piensa así
+PLACA 8 - El vecino piensa así
   VOS:     Exactamente: se rompió una luz, tengo basura en la esquina,
            necesito habilitar un comercio.
   MIGUE 9: "Entonces… empecemos por ahí."
 
-PLACA 10 - Escribile a Migue ahora
+PLACA 9 - Escribile a Migue ahora
   VOS:     Invitar a la sala a escribirle por smt.gob.ar o por Telegram.
            Botón "Pregunta" (en orden, respuestas ya guardadas): San Lorenzo ->
            cómo habilito un negocio -> cuándo es la fiesta de la ciudad.
            El mismo botón cierra la pregunta.
 
-PLACA 11 - Escuchamos al vecino de otra manera
+PLACA 10 - Escuchamos al vecino de otra manera
   VOS:     Cada pregunta nos dice qué necesita la ciudad, cuándo y qué le
            falta encontrar.
 
-PLACA 12 - Cada conversación es un dato (tablero)
+PLACA 11 - Cada conversación es un dato (tablero)
   VOS:     13.022 consultas, 4.964 vecinos, 89% resueltas.
            3 de cada 4 son trámites.
 
-PLACA 13 - La inteligencia artificial es un servicio público
+PLACA 12 - La inteligencia artificial es un servicio público
   VOS:     Por primera vez en Tucumán: para informarse, gestionar trámites y
            recibir respuestas, 24/7. En Ciudadano Digital, smt.gob.ar y
            Telegram.
 
-PLACA 14 - Primero digitalizamos los trámites. Ahora, la conversación con el vecino
+PLACA 13 - Primero digitalizamos los trámites. Ahora, la conversación con el vecino
   VOS:     Dejar que se den vuelta las cuatro tarjetas, de Antes a Ahora.
 
-PLACA 15 - Estamos haciendo historia
+PLACA 14 - Estamos haciendo historia
   VOS:     Incorporando la máxima tecnología al servicio de los sanmiguelinos.
 
-PLACA 16 - Hablale a Migue
+PLACA 15 - Hablale a Migue
   MIGUE 10: "Bueno, amigos… Luciano, Marco. Yo me voy yendo, porque ahora sí
             empieza mi misión. Pero antes… para arrancar como corresponde,
             necesito que me ayuden con una cosa. Yo digo una palabra… y
