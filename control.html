@@ -14,10 +14,18 @@
 @font-face { font-family: 'Poppins'; font-weight: 800; src: url(fonts/Poppins-ExtraBold.ttf); }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: #0f1623; color: #fff; font-family: 'Poppins', system-ui, sans-serif; user-select: none; overflow: hidden; touch-action: manipulation; }
-body { display: grid; grid-template-rows: auto auto 1.25fr 1.6fr .75fr .6fr; gap: 10px; padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); height: 100dvh; }
-button { font-family: inherit; border: 0; color: inherit; border-radius: 24px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .08s ease, filter .15s ease, box-shadow .2s ease; position: relative; }
+/* Cada zona tiene un alto proporcional a la pantalla y NUNCA crece por el texto:
+   un texto largo se corta con "…" en lugar de empujar los botones fuera de la
+   pantalla. Letras que se ajustan al ancho del celular. */
+body { display: grid; gap: 10px; height: 100vh; height: 100dvh; padding: calc(10px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom));
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto minmax(0, 1.25fr) minmax(0, 1.6fr) minmax(0, .75fr) minmax(0, .6fr);
+  grid-template-areas: "estado" "guion" "migue" "siguiente" "tres" "dos"; }
+#estado { grid-area: estado; } #guion { grid-area: guion; } #migue { grid-area: migue; } #siguiente { grid-area: siguiente; } .tres { grid-area: tres; } .dos { grid-area: dos; }
+button { font-family: inherit; border: 0; color: inherit; border-radius: 24px; font-weight: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; transition: transform .08s ease, filter .15s ease, box-shadow .2s ease; position: relative; min-height: 0; min-width: 0; overflow: hidden; padding: 6px 10px; line-height: 1.1; text-align: center; }
 button:active { transform: scale(.97); filter: brightness(1.25); }
-button small { font-size: 15px; font-weight: 600; opacity: .8; max-width: 92%; line-height: 1.25; text-align: center; }
+button small { font-size: clamp(12px, 3.6vw, 15px); font-weight: 600; opacity: .8; max-width: 94%; line-height: 1.25; text-align: center; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.tres, .dos { min-height: 0; } .tres button, .dos button { height: 100%; }
 /* Confirmación de cada toque: borde verde si la pantalla lo recibió, rojo si no. */
 button.enviando { box-shadow: inset 0 0 0 4px rgba(255,255,255,.55); }
 button.llego { box-shadow: inset 0 0 0 5px #3ecf8e; }
@@ -31,17 +39,17 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 .punto.ok { background: #3ecf8e; }
 /* Sin pantalla: la barra de arriba se pone roja y grande, imposible no verla. */
 .estado.alerta { background: #e5484d; color: #fff; padding: 10px 14px; min-height: 56px; }
-.estado.alerta .titulo { color: #fff; white-space: normal; font-size: 16px; font-weight: 800; }
+.estado.alerta .titulo { color: #fff; white-space: normal; font-size: 16px; font-weight: 800; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .estado.alerta .punto { background: #fff; animation: titilar 1s infinite; }
 @keyframes titilar { 50% { opacity: .3; } }
 
-#migue { background: #f4dc00; color: #222; font-size: 30px; }
+#migue { background: #f4dc00; color: #222; font-size: clamp(20px, 7.4vw, 30px); }
 #migue.suena { background: #3ecf8e; }
-#siguiente { background: #0066ff; font-size: 40px; }
+#siguiente { background: #0066ff; font-size: clamp(26px, 10vw, 40px); }
 .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tres { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.gris { background: #242f42; font-size: 20px; }
-.ef { background: #1a2332; border: 2px solid #2b3850; font-size: 17px; border-radius: 20px; }
+.gris { background: #242f42; font-size: clamp(15px, 4.8vw, 20px); }
+.ef { background: #1a2332; border: 2px solid #2b3850; font-size: clamp(14px, 4.4vw, 17px); border-radius: 20px; }
 .ef.on { background: #3ecf8e; border-color: #3ecf8e; color: #0d2419; }
 
 /* Chequeo antes de empezar: sólo lo ve el presentador, en el celular. */
@@ -58,10 +66,29 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 #chequeo .listo.si { background: #3ecf8e; color: #0d2419; }
 
 /* Ayuda memoria: lo que decís vos en esta placa. */
-.guion { background: #1a2332; border-left: 4px solid #2eb1ff; border-radius: 12px; padding: 8px 12px; font-size: 15px; line-height: 1.35; color: #e8edf5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.guion { background: #1a2332; border-left: 4px solid #2eb1ff; border-radius: 12px; padding: 8px 12px; font-size: clamp(13px, 3.8vw, 15px); line-height: 1.35; color: #e8edf5; }
+/* El recorte va en el texto (no en la caja): así no asoma medio renglón por el margen. */
+.guion .txt { display: -webkit-box; -webkit-line-clamp: var(--renglones); -webkit-box-orient: vertical; overflow: hidden; }
+.guion { --renglones: 3; }
 .guion b { color: #2eb1ff; font-size: 12px; letter-spacing: 1.5px; margin-right: 6px; }
 .guion:empty { display: none; }
 #migue small { font-style: italic; }
+
+/* Celulares bajitos: menos renglones de guion para dejar lugar a los botones. */
+@media (max-height: 640px) { .guion { --renglones: 2; } body { gap: 8px; } }
+/* En los botones chicos, el texto de abajo va en un solo renglón. */
+.ef small { -webkit-line-clamp: 1; }
+/* Celular acostado: dos columnas, Migue a la izquierda y Siguiente a la derecha. */
+@media (orientation: landscape) and (max-height: 560px) {
+  body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1.5fr) minmax(0, 1fr);
+    grid-template-areas: "estado estado" "guion guion" "migue siguiente" "tres dos"; gap: 8px; }
+  .guion { --renglones: 2; }
+  #migue { font-size: clamp(18px, 3.6vw, 26px); } #siguiente { font-size: clamp(22px, 4.6vw, 34px); }
+  .gris { font-size: clamp(13px, 2.4vw, 17px); } .ef { font-size: clamp(13px, 2.2vw, 16px); }
+  button small { font-size: clamp(11px, 1.9vw, 14px); }
+  #chequeo { top: 8px; max-height: calc(100dvh - 16px); overflow: auto; }
+}
 
 /* Pedir el código de sala cuando falta. */
 #sala { position: fixed; inset: 0; z-index: 9; background: #0f1623; display: none; flex-direction: column; justify-content: center; gap: 16px; padding: 28px; }
@@ -184,7 +211,7 @@ function pintar() {
   // Debajo de MIGUE HABLA: la frase que va a decir (o el nombre del video si no tiene).
   const frase = e.fraseProxima ? '“' + corta2(e.fraseProxima, 90) + '”' : (v[e.proximo] || '');
   $('migueSub').textContent = e.hablando ? (v[e.actual] || '') : (v[e.proximo] ? (e.proximo + 1) + '. ' + frase : 'No quedan videos');
-  const gu = $('guion'); gu.innerHTML = ''; if (e.guion) { const b = document.createElement('b'); b.textContent = 'VOS'; gu.append(b, document.createTextNode(e.guion)); }
+  const gu = $('guion'); gu.innerHTML = ''; if (e.guion) { const t = document.createElement('div'); t.className = 'txt'; const b = document.createElement('b'); b.textContent = 'VOS'; t.append(b, document.createTextNode(e.guion)); gu.append(t); }
   $('azahar').classList.toggle('on', !!(e.efectos && e.efectos.azahar));
   $('azahar').textContent = e.efectos && e.efectos.azahar ? 'Parar azahar' : 'Azahar';
   $('pregunta').classList.toggle('on', !!e.vivo);
