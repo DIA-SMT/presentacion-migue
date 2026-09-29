@@ -666,7 +666,8 @@ h1, h2, h3 { font-weight: 700; }
 const VIDEOS = [
   // Con esto empieza todo: Migue le regala flores a la Intendenta.
   // Fondo magenta (no verde): el verde se confundía con los tallos del ramo.
-  { archivo: 'media/migueflores1.mp4', texto: 'Flores para la Intendenta', geo: 'flores', croma: 'magenta' },
+  { archivo: 'media/migueflores1.mp4', texto: 'Saludo y flores para la Intendenta', geo: 'flores', croma: 'magenta',
+    sub: ['Hola, buenas, sí.', 'Es que ya llegó la primavera: en unas semanas va a ser el Día de la Madre.', 'Y aunque yo mamá no tengo…', 'me gustaría darle un regalo a la mujer que tomó la decisión de que yo pueda estar acá hablándoles.'] },
   { archivo: 'media/migue1.mp4', texto: 'No tengo un botón para el bache', sub: 'O sea… no tengo un botón escondido que dice “respuesta para bache”.' },
   { archivo: 'media/migue2.mp4', texto: 'Vos me contás qué te pasa', sub: 'Vos me contás qué te pasa. Yo intento entender qué necesitás.' },
   { archivo: 'media/migue3.mp4', texto: 'No sólo converso', sub: 'En otras palabras… no sólo converso.' },
@@ -675,12 +676,13 @@ const VIDEOS = [
   { archivo: 'media/migue6.mp4', texto: 'Me enseñaron cómo trabajar', sub: 'Básicamente… me enseñaron cómo trabajar.' },
   { archivo: 'media/migue7.mp4', texto: 'Pero el vecino no piensa así', sub: 'Pero el vecino no piensa así.' },
   { archivo: 'media/migue9.mp4', texto: 'Entonces, empecemos por ahí', sub: 'Entonces… empecemos por ahí.' },
-  // Cierre: charla final con Migue (cambiar 'texto' por lo que dice cada uno).
-  { archivo: 'media/migue10.mp4', texto: 'Cierre 1 (19 s)' },
-  { archivo: 'media/migue11.mp4', texto: 'Cierre 2' },
-  { archivo: 'media/migue12.mp4', texto: 'Cierre 3' },
-  { archivo: 'media/migue13.mp4', texto: 'Cierre 4' },
-  { archivo: 'media/migue14.mp4', texto: 'Cierre 5' },
+  // Cierre: charla final con Migue.
+  { archivo: 'media/migue10.mp4', texto: 'Me voy yendo… ¿me ayudan?',
+    sub: ['Bueno, amigos… Luciano, Marco.', 'Yo me voy yendo, porque ahora sí empieza mi misión.', 'Pero antes… para arrancar como corresponde, necesito que me ayuden con una cosa.', 'Yo digo una palabra… y ustedes completan la otra.', '¿Estamos?'] },
+  { archivo: 'media/migue11.mp4', texto: '¿Qué inteligencia?', sub: '¿Qué inteligencia?' },
+  { archivo: 'media/migue12.mp4', texto: 'Ja, inteligencia', sub: '¡Ja! Inteligencia…' },
+  { archivo: 'media/migue13.mp4', texto: 'Inteligencia', sub: 'Inteligencia…' },
+  { archivo: 'media/migue14.mp4', texto: '¡Gracias! Nos vemos en la ciudad', sub: ['¡Muchas gracias a todos!', 'Y ahora sí… nos vemos en la ciudad. ¡Chau!'] },
 ];
 // Animaciones de espera (sin sonido). Se alternan mientras Migue escucha.
 const LOOPS = ['media/migueloop1.mp4', 'media/migueloop2.mp4', 'media/migueloop3.mp4'];
@@ -858,13 +860,34 @@ const migue = (() => {
     globo.classList.remove('ver');
     try { if (ctx && ctx.state === 'suspended') await ctx.resume(); await c.v.play(); } catch (e) { console.warn('No se pudo reproducir', e); return; }
     api.hablando = true; cont.classList.add('hablando');
-    const sub = document.getElementById('subtitulo');
-    if (VIDEOS[i].sub) { const t = document.createElement('span'); t.textContent = VIDEOS[i].sub; sub.replaceChildren(t); sub.classList.add('ver'); } else sub.classList.remove('ver');
+    mostrarSubtitulo(i, c.v);
     // Mientras habla, el loop de espera se pausa (queda su último cuadro para el fundido).
     setTimeout(() => { if (api.hablando) { const l = loops[loopActual]; if (l && !l.v.paused) l.v.pause(); } }, 450);
     c.v.onended = () => { if (clipActual === i) terminar(); };
     informar();
   };
+  // Subtítulo del video. Si es una lista de frases, va cambiando con el video:
+  // cada frase ocupa un tramo proporcional a su largo.
+  let subVideo = null, subFrase = -1;
+  function pintarFrase(texto) {
+    const sub = document.getElementById('subtitulo'), t = document.createElement('span');
+    t.textContent = texto; sub.replaceChildren(t); sub.classList.add('ver');
+  }
+  function mostrarSubtitulo(i, v) {
+    const sub = document.getElementById('subtitulo'), s = VIDEOS[i].sub;
+    if (subVideo) { subVideo.ontimeupdate = null; subVideo = null; }
+    subFrase = -1;
+    if (!s) { sub.classList.remove('ver'); return; }
+    if (!Array.isArray(s)) { pintarFrase(s); return; }
+    const pesos = s.map(f => f.length + 12), total = pesos.reduce((a, b) => a + b, 0);
+    const cortes = []; let acum = 0; pesos.forEach(p => { acum += p; cortes.push(acum / total); });
+    pintarFrase(s[0]); subFrase = 0; subVideo = v;
+    v.ontimeupdate = () => {
+      if (!v.duration) return;
+      const f = v.currentTime / v.duration; let k = cortes.findIndex(c => f < c); if (k < 0) k = s.length - 1;
+      if (k !== subFrase) { subFrase = k; pintarFrase(s[k]); }
+    };
+  }
   function terminar() {
     api.hablando = false; cont.classList.remove('hablando');
     document.getElementById('subtitulo').classList.remove('ver');
