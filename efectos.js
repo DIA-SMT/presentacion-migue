@@ -93,19 +93,19 @@
   // Migue (el mismo del sitio smt.gob.ar).
   //
   // QUE NUNCA FALLE EN EL ESCENARIO
-  //   Las preguntas preparadas se le hacen a Migue apenas se abre la
-  //   presentación, y sus respuestas (reales) quedan guardadas. En el
-  //   escenario se muestran al instante, sin depender de la red. Una pregunta
-  //   nueva va en vivo, con reintentos; si igual no hay respuesta, Migue lo
-  //   dice con sus palabras, nunca con un mensaje técnico.
-  const PREGUNTAS = [
-    'Ehh, necesito llegar rápido al trabajo, ¿hay algún corte en la San Lorenzo hoy?',
-    '¿Cómo habilito un negocio?',
-    '¿Cuándo es la fiesta de la ciudad?',
-  ];
+  //   Las respuestas de las preguntas de la botonera están fijas acá: son las
+  //   que dio Migue (su chat real) el 29/9/2026. No dependen de la conexión.
+  //   Una pregunta nueva (consola completa) va en vivo, con reintentos; si no
+  //   hay respuesta, Migue lo dice con sus palabras, nunca con un error técnico.
+  const RESPUESTAS = {
+    "Ehh, necesito llegar rápido al trabajo, ¿hay algún corte en la San Lorenzo hoy?": "Sí: en San Lorenzo hay un corte total entre Güemes y Baltazar Aguirre, por repavimentación. Está programado desde el 28/09 hasta el 05/10.  \nOjo que esto es lo que figura como corte programado; si aparece algo imprevisto (accidente, caño roto, etc.), puede no estar cargado acá.",
+    "¿Cómo habilito un negocio?": "Para habilitar un negocio en San Miguel de Tucumán podés hacerlo de dos maneras:\n\n1) Habilitación online\nEsta modalidad es para locales comerciales con una superficie menor a los 300 mts2, que no requieran Carpeta Técnica de Defensa Civil ni Final de obra de Catastro, y para actividades de bajo riesgo (el listado aparece en la plataforma).\nVas a tener que cargar: foto de la fachada, DNI (según sea persona física o jurídica), y documentación de ARCA (Reflejo de datos, Históricos de Actividades, Impuestos y Domicilios). Después de la revisión y el pago, se otorga un permiso provisorio por 60 días.\nConsultas WhatsApp: 3813647186.\n\n2) Habilitación presencial\nSe hace en la Subdirección de Habilitación ( Calle Crisóstomo Álvarez 229 ), Oficina: Administrativo, de 08:00 a 13:00 hs.\nSe presenta: Formulario FHM (por duplicado), foto de fachada, copia de DNI (y documentación de representación/poder si corresponde), y el instrumento legal para acreditar el uso del local (contrato/autorización con firmas certificadas). En algunos casos también se pide Carpeta técnica aprobada de Defensa Civil y Final de Obra de Catastro.\nConsultas WhatsApp: 3813647186.",
+    "¿Cuándo es la fiesta de la ciudad?": "La Gran Fiesta de la Ciudad es el sábado 03/10/2026 a las 16:00.\n\nMás info: https://comunicacionsmt.gob.ar/contenido/17062/gran-fiesta-de-la-ciudad"
+  };
+  const PREGUNTAS = Object.keys(RESPUESTAS);
   const vivoEl = document.getElementById('vivo'), hilo = vivoEl.querySelector('.hilo');
   const sesion = 'presentacion-' + Date.now().toString(36);
-  const guardadas = new Map();
+  const guardadas = new Map(Object.entries(RESPUESTAS));
   let estadoVivo = null, tipeo = null, proxima = 0, codigo = 'probando', precargando = false;
   function escapar(t) { return t.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
   function formatear(t) {
@@ -192,5 +192,4 @@
     // Para revisar desde la consola qué va a responder Migue a cada pregunta preparada.
     respuestas: () => Object.fromEntries(guardadas),
   };
-  precargar();
 })();

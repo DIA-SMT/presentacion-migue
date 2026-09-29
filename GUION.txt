@@ -54,7 +54,7 @@ PLACA 9 - El vecino piensa así
 
 PLACA 10 - Escribile a Migue ahora
   VOS:     Invitar a la sala a escribirle por smt.gob.ar o por Telegram.
-           Botón "Pregunta" (en orden): corte en la San Lorenzo ->
+           Botón "Pregunta" (en orden, respuestas ya guardadas): San Lorenzo ->
            cómo habilito un negocio -> cuándo es la fiesta de la ciudad.
            El mismo botón cierra la pregunta.
 
@@ -91,3 +91,8 @@ PLACA 16 - Hablale a Migue
   VOS:      Tocar "Azahar" cuando quieras que empiece la lluvia
             (se para con "Parar azahar").
   MIGUE 14: "¡Muchas gracias a todos! Y ahora sí… nos vemos en la ciudad. ¡Chau!"
+
+SI SE DISPARA UN VIDEO DE MÁS: botón "↶ Video" (o tecla Z). Si está sonando,
+lo corta y queda otra vez como el próximo; si ya terminó, vuelve un video atrás.
+QR gigante para la sala: tecla Q. En la pantalla de inicio, Q muestra el QR
+para vincular el celular.

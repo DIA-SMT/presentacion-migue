@@ -627,7 +627,7 @@ h1, h2, h3 { font-weight: 700; }
   <b>← · RePág</b> placa anterior<br>
   <b>Enter · M · B · .</b> Migue habla (próximo video)<br>
   <b>1 … 9</b> Migue dice ese video (del 10 en adelante, desde el celular)<br>
-  <b>S</b> Migue se calla · <b>R</b> repite el último<br>
+  <b>S</b> Migue se calla · <b>R</b> repite el último · <b>Z</b> deshace el último video<br>
   <b>0</b> vuelve la lista de videos al principio<br>
   <b>H</b> oculta/muestra a Migue · <b>F</b> pantalla completa<br>
   <b>D</b> abre el panel de Migue en otra pestaña<br>
@@ -639,7 +639,7 @@ h1, h2, h3 { font-weight: 700; }
 <div id="inicio">
   <div class="ini-izq">
     <img src="img/logo-vertical-blanco.png" alt="">
-    <small>Tocá para empezar · T: vincular el celular</small>
+    <small>Tocá para empezar · Q: QR para vincular el celular</small>
   </div>
   <div class="ini-der" id="vinculo" hidden>
     <p class="ini-tit">Botonera del celular</p>
@@ -902,6 +902,13 @@ const migue = (() => {
   };
   api.repetir = () => { if (clipActual >= 0) api.decir(clipActual); };
   api.reiniciar = () => { proximo = 0; informar(); };
+  // Deshacer: si un video se disparó de más, lo corta (si está sonando) y lo
+  // deja otra vez como el próximo. Si ya terminó, vuelve la lista un paso atrás.
+  api.atras = () => {
+    if (api.hablando && clipActual >= 0) { const i = clipActual; api.callar(true); proximo = i; }
+    else proximo = Math.max(0, proximo - 1);
+    informar();
+  };
   api.alternar = () => { cont.classList.toggle('oculto'); if (cont.classList.contains('oculto')) api.callar(); informar(); };
 
   // Resolución del lienzo acorde a la escala real de la pantalla.
@@ -1291,6 +1298,7 @@ function ejecutar(c) {
     case 'callar': migue.callar(); break;
     case 'repetir': migue.repetir(); break;
     case 'reiniciar': migue.reiniciar(); break;
+    case 'migue-atras': migue.atras(); break;
     case 'ocultar': migue.alternar(); break;
   }
   setTimeout(informar, 60);
@@ -1309,7 +1317,7 @@ document.getElementById('inicio').addEventListener('click', empezar);
 
 addEventListener('keydown', (e) => {
   if (e.target && e.target.closest && e.target.closest('#vinculo')) return; // escribiendo el código de sala
-  if (!empezado && (e.key === 't' || e.key === 'T')) { const v = document.getElementById('vinculo'); v.hidden = !v.hidden; return; }
+  if (!empezado && ['q', 'Q', 't', 'T'].includes(e.key)) { const v = document.getElementById('vinculo'); v.hidden = !v.hidden; return; }
   if (!empezado) { empezar(); return; }
   const k = e.key;
   if (['ArrowRight', 'PageDown', ' ', 'ArrowDown'].includes(k)) { e.preventDefault(); cambiar(base() + 1); }
@@ -1318,6 +1326,7 @@ addEventListener('keydown', (e) => {
   else if (k === 'l' || k === 'L') window.efectos.foco();
   else if (k === 'q' || k === 'Q') window.efectos.qr();
   else if (k === 'x' || k === 'X') window.vivo.cerrar();
+  else if (k === 'z' || k === 'Z') migue.atras();
   else if (['Enter', 'm', 'M', 'b', 'B', '.'].includes(k)) { e.preventDefault(); migue.decir(); }
   else if (k >= '1' && k <= '9') migue.decir(parseInt(k, 10) - 1);
   else if (k === '0') migue.reiniciar();

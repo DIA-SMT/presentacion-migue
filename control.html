@@ -39,7 +39,7 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 #siguiente { background: #0066ff; font-size: 40px; }
 .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tres { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-.gris { background: #242f42; font-size: 22px; }
+.gris { background: #242f42; font-size: 20px; }
 .ef { background: #1a2332; border: 2px solid #2b3850; font-size: 17px; border-radius: 20px; }
 .ef.on { background: #3ecf8e; border-color: #3ecf8e; color: #0d2419; }
 
@@ -73,14 +73,14 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
 
 <button id="siguiente">SIGUIENTE ▶</button>
 
-<div class="dos">
-  <button class="gris" id="anterior">◀ Anterior</button>
+<div class="tres">
+  <button class="gris" id="anterior">◀ Placa</button>
   <button class="gris" id="callar">Callar</button>
+  <button class="gris" id="atras">↶ Video<small>deshacer</small></button>
 </div>
 
-<div class="tres">
+<div class="dos">
   <button class="ef" id="azahar">Azahar</button>
-  <button class="ef" id="qr">QR</button>
   <button class="ef" id="pregunta">Pregunta<small>en vivo</small></button>
 </div>
 
@@ -88,7 +88,6 @@ button.fallo { box-shadow: inset 0 0 0 5px #e5484d; animation: temblar .35s ease
   <h2>Antes de empezar</h2>
   <ul>
     <li id="ck-pantalla"><i></i><span>Pantalla conectada</span></li>
-    <li id="ck-codigo"><i></i><span>Código de sala</span></li>
     <li id="ck-videos"><i></i><span>Videos de Migue</span></li>
     <li id="ck-respuestas"><i></i><span>Preguntas en vivo preparadas</span></li>
   </ul>
@@ -138,7 +137,7 @@ boton('anterior', () => ({ cmd: 'anterior' }));
 boton('migue', () => ({ cmd: 'migue' }));
 boton('callar', () => ({ cmd: 'callar' }));
 boton('azahar', () => ({ cmd: 'azahar', on: !$('azahar').classList.contains('on') }));
-boton('qr', () => ({ cmd: 'qr', on: !$('qr').classList.contains('on') }));
+boton('atras', () => ({ cmd: 'migue-atras' }));
 boton('pregunta', () => (ultimo && ultimo.vivo ? { cmd: 'cerrar-pregunta' } : { cmd: 'preguntar-siguiente' }));
 
 function marca(id, estado, texto) { const li = $(id); li.className = estado; li.querySelector('span').textContent = texto; }
@@ -147,15 +146,14 @@ function pintarChequeo() {
   const antes = !e || e.empezado === false;
   $('chequeo').classList.toggle('ver', antes && remoto.modo !== 'sin-sala');
   if (!antes) return;
-  const ok = { pantalla: conectado && !!e, codigo: false, videos: false, respuestas: false };
+  const ok = { pantalla: conectado && !!e, videos: false, respuestas: false };
   marca('ck-pantalla', ok.pantalla ? 'ok' : 'mal', ok.pantalla ? 'Pantalla conectada' : 'Sin pantalla: abrila con el mismo código');
   if (c) {
-    ok.codigo = c.codigo === 'ok'; ok.videos = c.videos >= c.totalVideos; ok.respuestas = c.respuestas >= c.totalRespuestas;
-    marca('ck-codigo', ok.codigo ? 'ok' : c.codigo === 'mal' ? 'mal' : '', ok.codigo ? 'Código de sala correcto' : c.codigo === 'mal' ? 'Código de sala incorrecto: abrí el link con el código correcto' : 'Probando el código…');
+    ok.videos = c.videos >= c.totalVideos; ok.respuestas = c.respuestas >= c.totalRespuestas;
     marca('ck-videos', ok.videos ? 'ok' : '', 'Videos de Migue: ' + c.videos + ' de ' + c.totalVideos);
-    marca('ck-respuestas', ok.respuestas ? 'ok' : c.codigo === 'mal' ? 'mal' : '', 'Preguntas en vivo preparadas: ' + c.respuestas + ' de ' + c.totalRespuestas);
+    marca('ck-respuestas', ok.respuestas ? 'ok' : '', 'Preguntas en vivo listas: ' + c.respuestas + ' de ' + c.totalRespuestas);
   }
-  const todo = ok.pantalla && ok.codigo && ok.videos && ok.respuestas;
+  const todo = ok.pantalla && ok.videos && ok.respuestas;
   $('ck-listo').classList.toggle('si', todo);
   $('ck-listo').textContent = todo ? 'Todo listo. Tocá la pantalla grande para empezar.' : 'Todavía no: esperá a que todo esté en verde.';
 }
@@ -173,7 +171,6 @@ function pintar() {
   $('migue').classList.toggle('suena', !!e.hablando);
   $('migue').firstChild.textContent = e.hablando ? 'MIGUE HABLANDO' : 'MIGUE HABLA';
   $('migueSub').textContent = e.hablando ? (v[e.actual] || '') : (v[e.proximo] ? `${e.proximo + 1}. ${v[e.proximo]}` : 'No quedan videos');
-  $('qr').classList.toggle('on', !!(e.efectos && e.efectos.qr));
   $('azahar').classList.toggle('on', !!(e.efectos && e.efectos.azahar));
   $('azahar').textContent = e.efectos && e.efectos.azahar ? 'Parar azahar' : 'Azahar';
   $('pregunta').classList.toggle('on', !!e.vivo);
