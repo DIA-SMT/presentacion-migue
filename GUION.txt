@@ -1,0 +1,93 @@
+GUION DE PRÁCTICA - PRESENTACIÓN DE MIGUE
+==========================================
+
+MIGUE = tocar "MIGUE HABLA" en la botonera (suena el próximo video, en orden).
+
+Antes de empezar: abrir la presentación 10 minutos antes y esperar
+"Todo listo" en el celular.
+
+
+PLACA 1 - Migue · Ahora el que aprende es el Municipio
+  MIGUE 1: "Hola, buenas, sí. Es que ya llegó la primavera: en unas semanas
+           va a ser el Día de la Madre. Y aunque yo mamá no tengo, me
+           gustaría darle un regalo a la mujer que tomó la decisión de que
+           yo pueda estar acá hablándoles."
+
+PLACA 2 - Un sistema tradicional necesita que alguien prevea cada pregunta
+  VOS:     Migue no funciona como un sistema tradicional, donde alguien tiene
+           que prever cada pregunta y programar cada respuesta.
+  MIGUE 2: "O sea… no tengo un botón escondido que dice 'respuesta para bache'."
+
+PLACA 3 - El vecino habla como habla
+  VOS:     Exactamente. Usamos IA para interpretar lenguaje natural: el vecino
+           no necesita saber el nombre de la oficina ni del trámite.
+  MIGUE 3: "Vos me contás qué te pasa. Yo intento entender qué necesitás."
+
+PLACA 4 - Entender la pregunta es solo el primer paso
+  VOS:     Y ahí empieza lo interesante: identifica la intención, busca la
+           información, usa los servicios de la Municipalidad y orienta.
+  MIGUE 4: "En otras palabras… no sólo converso."
+
+PLACA 5 - Esa diferencia es fundamental
+  VOS:     La IA interpreta. Los sistemas municipales ejecutan. Las personas
+           deciden.
+  MIGUE 5: "Yo entiendo, organizo, busco… y ayudo."
+
+PLACA 6 - Nosotros definimos qué puede hacer, con qué información y hasta dónde
+  VOS:     Y nosotros definimos qué puede hacer, con qué información y hasta
+           dónde.
+  MIGUE 6: "Eso último era importante aclararlo."
+
+PLACA 7 - Una IA sola no conoce San Miguel de Tucumán
+  VOS:     Muchísimo. Tuvimos que darle datos, contexto, reglas y acceso
+           controlado a las herramientas municipales.
+  MIGUE 7: "Básicamente… me enseñaron cómo trabajar."
+
+PLACA 8 - Durante décadas, los servicios se ordenaron según la estructura del Estado
+  VOS:     Exactamente. Secretarías, direcciones, dependencias, trámites.
+  MIGUE 8: "Pero el vecino no piensa así."
+
+PLACA 9 - El vecino piensa así
+  VOS:     Exactamente: se rompió una luz, tengo basura en la esquina,
+           necesito habilitar un comercio.
+  MIGUE 9: "Entonces… empecemos por ahí."
+
+PLACA 10 - Escribile a Migue ahora
+  VOS:     Invitar a la sala a escribirle por smt.gob.ar o por Telegram.
+           Botón "Pregunta" (en orden): corte en la San Lorenzo ->
+           cómo habilito un negocio -> cuándo es la fiesta de la ciudad.
+           El mismo botón cierra la pregunta.
+
+PLACA 11 - Cada conversación es un dato (tablero)
+  VOS:     13.022 consultas, 4.964 vecinos, 89% resueltas.
+           3 de cada 4 son trámites.
+
+PLACA 12 - Escuchamos al vecino de otra manera
+  VOS:     Cada pregunta nos dice qué necesita la ciudad, cuándo y qué le
+           falta encontrar.
+
+PLACA 13 - La inteligencia artificial es un servicio público
+  VOS:     Por primera vez en Tucumán: para informarse, gestionar trámites y
+           recibir respuestas, 24/7. En Ciudadano Digital, smt.gob.ar y
+           Telegram.
+
+PLACA 14 - Primero digitalizamos los trámites. Ahora, la conversación con el vecino
+  VOS:     Dejar que se den vuelta las cuatro tarjetas, de Antes a Ahora.
+
+PLACA 15 - Estamos haciendo historia
+  VOS:     Incorporando la máxima tecnología al servicio de los sanmiguelinos.
+
+PLACA 16 - Hablale a Migue
+  MIGUE 10: "Bueno, amigos… Luciano, Marco. Yo me voy yendo, porque ahora sí
+            empieza mi misión. Pero antes… para arrancar como corresponde,
+            necesito que me ayuden con una cosa. Yo digo una palabra… y
+            ustedes completan la otra. ¿Estamos?"
+  (la sala responde)
+  MIGUE 11: "¿Qué inteligencia?"
+  (la sala responde)
+  MIGUE 12: "¡Ja! Inteligencia…"
+  (la sala responde)
+  MIGUE 13: "Inteligencia…"
+  VOS:      Tocar "Azahar" cuando quieras que empiece la lluvia
+            (se para con "Parar azahar").
+  MIGUE 14: "¡Muchas gracias a todos! Y ahora sí… nos vemos en la ciudad. ¡Chau!"
