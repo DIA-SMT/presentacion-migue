@@ -6,6 +6,24 @@
   "cleanUrls": true,
   "headers": [
     {
+      "source": "/(control|control-completo)?",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/(.*).(html|js|css)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
       "source": "/media/(.*)",
       "headers": [
         {
