@@ -114,7 +114,7 @@ boton('siguiente', () => ({ cmd: 'siguiente' }));
 boton('anterior', () => ({ cmd: 'anterior' }));
 boton('migue', () => ({ cmd: 'migue' }));
 boton('callar', () => ({ cmd: 'callar' }));
-boton('azahar', () => ({ cmd: 'azahar' }));
+boton('azahar', () => ({ cmd: 'azahar', on: !$('azahar').classList.contains('on') }));
 boton('qr', () => ({ cmd: 'qr', on: !$('qr').classList.contains('on') }));
 boton('pregunta', () => (ultimo && ultimo.vivo ? { cmd: 'cerrar-pregunta' } : { cmd: 'preguntar', texto: PREGUNTA }));
 
@@ -132,6 +132,8 @@ function pintar() {
   $('migue').firstChild.textContent = e.hablando ? 'MIGUE HABLANDO' : 'MIGUE HABLA';
   $('migueSub').textContent = e.hablando ? (v[e.actual] || '') : (v[e.proximo] ? `${e.proximo + 1}. ${v[e.proximo]}` : 'No quedan videos');
   $('qr').classList.toggle('on', !!(e.efectos && e.efectos.qr));
+  $('azahar').classList.toggle('on', !!(e.efectos && e.efectos.azahar));
+  $('azahar').textContent = e.efectos && e.efectos.azahar ? 'Parar azahar' : 'Azahar';
   $('pregunta').classList.toggle('on', !!e.vivo);
   $('pregunta').firstChild.textContent = e.vivo ? 'Cerrar' : 'Pregunta';
 }

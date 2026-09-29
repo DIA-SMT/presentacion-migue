@@ -2,7 +2,7 @@
 // Recursos en vivo de la presentación. Cada uno se dispara con un comando
 // (desde el celular o el teclado) y no depende de la placa en la que estés.
 //   · vivo.preguntar(texto)  Migue contesta en la pantalla grande, de verdad.
-//   · efectos.azahar()       lluvia de pétalos con los colores de la marca.
+//   · efectos.azahar(on)     lluvia de pétalos con los colores de la marca: se prende y se para a mano.
 //   · efectos.foco(on)       apaga la placa e ilumina a Migue.
 //   · efectos.qr(on)         QR gigantes para que la sala le escriba.
 //   · efectos.negro(on)      pantalla negra.
@@ -12,44 +12,54 @@
   const stage = document.getElementById('stage');
 
   // ---------------------------------------------------------------- azahar
+  // Llueve mientras está prendido y se apaga con un fundido corto: nunca queda
+  // lloviendo sola. Tope de pétalos en pantalla para no cargar la compu, y un
+  // apagado de seguridad si nadie la apaga.
   const lienzo = document.getElementById('azahar');
   const cx = lienzo.getContext('2d');
-  let petalos = [], corriendo = false;
   const COLORES = ['#0066ff', '#2eb1ff', '#ffffff', '#2eb1ff', '#0066ff'];
-  function nuevoPetalo(demora) {
-    const s = 14 + Math.random() * 22;
+  const MAX = 170, POR_SEGUNDO = 38, SEGURIDAD = 120000; // se apaga sola a los 2 minutos si nadie la para
+  let petalos = [], lloviendo = false, corriendo = false, apagado = 1, ultimo = 0, acumulado = 0, tope = null;
+  function nuevoPetalo() {
     return {
-      x: Math.random() * 1920, y: -60 - Math.random() * 300, s,
-      vy: 1.6 + Math.random() * 2.4, vx: -0.6 + Math.random() * 1.2, fase: Math.random() * 6.28,
-      rot: Math.random() * 6.28, vr: (-0.03 + Math.random() * 0.06),
+      x: Math.random() * 1920, y: -40 - Math.random() * 80, s: 14 + Math.random() * 22,
+      vy: 110 + Math.random() * 150, vx: -40 + Math.random() * 80, fase: Math.random() * 6.28,
+      rot: Math.random() * 6.28, vr: -1.8 + Math.random() * 3.6,
       color: Math.random() < 0.16 ? '#f4dc00' : COLORES[Math.floor(Math.random() * COLORES.length)],
-      punto: Math.random() < 0.16, demora,
+      punto: Math.random() < 0.16,
     };
   }
   function dibujarPetalo(p) {
-    cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot);
-    cx.fillStyle = p.color; cx.shadowColor = 'rgba(0,0,0,.18)'; cx.shadowBlur = 6;
+    cx.setTransform(Math.cos(p.rot), Math.sin(p.rot), -Math.sin(p.rot), Math.cos(p.rot), p.x, p.y);
+    cx.fillStyle = p.color;
     if (p.punto) { cx.beginPath(); cx.arc(0, 0, p.s * 0.45, 0, 7); cx.fill(); }
-    else {
-      const s = p.s; cx.beginPath(); cx.moveTo(0, -s);
-      cx.quadraticCurveTo(s * 0.9, 0, 0, s); cx.quadraticCurveTo(-s * 0.9, 0, 0, -s); cx.fill();
-    }
-    cx.restore();
+    else { const s = p.s; cx.beginPath(); cx.moveTo(0, -s); cx.quadraticCurveTo(s * 0.9, 0, 0, s); cx.quadraticCurveTo(-s * 0.9, 0, 0, -s); cx.fill(); }
   }
   function cuadroAzahar(t) {
-    cx.clearRect(0, 0, 1920, 1080);
-    petalos.forEach(p => {
-      if (p.demora > 0) { p.demora -= 16; return; }
-      p.fase += 0.03; p.x += p.vx + Math.sin(p.fase) * 1.4; p.y += p.vy; p.rot += p.vr;
-      dibujarPetalo(p);
-    });
-    petalos = petalos.filter(p => p.y < 1160);
-    if (petalos.length) requestAnimationFrame(cuadroAzahar); else { corriendo = false; cx.clearRect(0, 0, 1920, 1080); }
+    const dt = Math.min(0.05, ultimo ? (t - ultimo) / 1000 : 0.016); ultimo = t;
+    if (lloviendo) {
+      acumulado += dt * POR_SEGUNDO;
+      while (acumulado >= 1) { acumulado--; if (petalos.length < MAX) petalos.push(nuevoPetalo()); }
+    } else apagado = Math.max(0, apagado - dt / 1.2);
+    cx.setTransform(1, 0, 0, 1, 0, 0); cx.clearRect(0, 0, 1920, 1080);
+    cx.globalAlpha = apagado;
+    petalos.forEach(p => { p.fase += dt * 2; p.x += (p.vx + Math.sin(p.fase) * 60) * dt; p.y += p.vy * dt; p.rot += p.vr * dt; dibujarPetalo(p); });
+    cx.setTransform(1, 0, 0, 1, 0, 0); cx.globalAlpha = 1;
+    petalos = petalos.filter(p => p.y < 1140);
+    if (lloviendo || (apagado > 0 && petalos.length)) requestAnimationFrame(cuadroAzahar);
+    else { corriendo = false; petalos = []; cx.clearRect(0, 0, 1920, 1080); }
   }
-  function azahar() {
-    for (let i = 0; i < 220; i++) petalos.push(nuevoPetalo(Math.random() * 3200));
-    if (!corriendo) { corriendo = true; requestAnimationFrame(cuadroAzahar); }
+  function azahar(on) {
+    lloviendo = on == null ? !lloviendo : !!on;
+    clearTimeout(tope);
+    if (lloviendo) {
+      apagado = 1;
+      tope = setTimeout(() => azahar(false), SEGURIDAD);
+      if (!corriendo) { corriendo = true; ultimo = 0; requestAnimationFrame(cuadroAzahar); }
+    }
+    avisarCambio();
   }
+  function avisarCambio() { window.informar && window.informar(); }
 
   // ---------------------------------------------------------------- foco, qr, negro
   let focoManual = false, focoAuto = true;
@@ -75,7 +85,7 @@
     qr: (on) => qrs.classList.toggle('ver', on == null ? !qrs.classList.contains('ver') : !!on),
     negro: (on) => negro.classList.toggle('ver', on == null ? !negro.classList.contains('ver') : !!on),
     barrido,
-    estado: () => ({ foco: focoManual, focoAuto, qr: qrs.classList.contains('ver'), negro: negro.classList.contains('ver') }),
+    estado: () => ({ foco: focoManual, focoAuto, azahar: lloviendo, qr: qrs.classList.contains('ver'), negro: negro.classList.contains('ver') }),
   };
 
   // ---------------------------------------------------------------- en vivo

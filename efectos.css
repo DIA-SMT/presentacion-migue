@@ -3,9 +3,9 @@
    ===================================================================== */
 
 /* ---------- Foco en Migue: la placa se apaga y Migue queda iluminado ---------- */
-.slide { transition: opacity .6s ease, visibility 0s linear .6s, filter .6s ease; }
-.slide.on { transition: opacity .6s ease, filter .6s ease; }
-#stage.foco .slide.on, #stage.envivo .slide.on { filter: brightness(.42) saturate(.6) blur(3px); }
+/* Un velo oscuro sobre la placa: mucho más liviano que filtrar la placa entera. */
+#velo { position: absolute; inset: 0; background: rgba(8,12,22,.62); opacity: 0; pointer-events: none; transition: opacity .5s ease; }
+#stage.foco #velo, #stage.envivo #velo { opacity: 1; }
 #luz { position: absolute; left: 1180px; top: 250px; width: 980px; height: 980px; border-radius: 50%; pointer-events: none;
   background: radial-gradient(circle, rgba(255,250,220,.55) 0%, rgba(255,250,220,.18) 38%, rgba(255,250,220,0) 62%);
   opacity: 0; transform: scale(.85); transition: opacity .6s ease, transform .8s cubic-bezier(.2,.8,.2,1); }
